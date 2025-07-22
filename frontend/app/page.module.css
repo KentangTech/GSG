@@ -5,7 +5,7 @@ body {
   overflow-x: hidden;
 }
 
-.main { 
+.main {
   width: 100%;
   margin: 0;
   padding: 0;
@@ -120,22 +120,38 @@ body {
   .main {
     margin-bottom: 0;
   }
-  
+
   .container {
     height: 250vh;
   }
-  
+
   .stickyMask {
-    mask-image: url("/medias/U-829.svg");
+    mask-image: url("/medias/U-828.svg");
     mask-size: 60%;
     mask-position: 50% center;
-    -webkit-mask-image: url("/medias/U-829.svg");
+    -webkit-mask-image: url("/medias/U-828.svg");
     -webkit-mask-size: 60%;
     -webkit-mask-position: 50% center;
   }
 }
 
-@media (max-width: 767px) {
+/* Media query untuk 767px ke bawah harus ditempatkan SEBELUM 766px */
+@media (max-width: 767px) and (min-width: 766px) {
+  .stickyMask {
+    mask-image: url("/medias/U-766.svg");
+    mask-size: 55%;
+    mask-position: 50% center;
+    -webkit-mask-image: url("/medias/U-766.svg");
+    -webkit-mask-size: 55%;
+    -webkit-mask-position: 50% center;
+  }
+
+  .container {
+    height: 220vh;
+  }
+}
+
+@media (max-width: 765px) {
   .stickyMask {
     -webkit-mask-image: url("/medias/vertikal.svg");
     -webkit-mask-size: 40%;
@@ -144,7 +160,7 @@ body {
     mask-size: 40%;
     mask-position: center center;
   }
-  
+
   .container {
     height: 200vh;
   }
@@ -337,8 +353,17 @@ html {
   transform: translateY(0);
 }
 
-body, .main, .container, .stars, .stars2, .stickyMask, .scrollButton,
-.logo-container, .movingBanner, .logoContainer, .direksi-section,
+body,
+.main,
+.container,
+.stars,
+.stars2,
+.stickyMask,
+.scrollButton,
+.logo-container,
+.movingBanner,
+.logoContainer,
+.direksi-section,
 .fade-in {
   box-sizing: border-box;
 }

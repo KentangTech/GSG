@@ -1,406 +1,140 @@
-"use client";
-import { useEffect, useState } from "react";
+import React from 'react';
+import Head from 'next/head';
+import styles from '@/app/css/NewsSection.module.css';
 
-export default function NewsSection() {
-  const [newsList, setNewsList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const NewsSection = () => {
+  const newsData = [
+    {
+      id: 1,
+      title: "Revolutionary AI Technology Transforms Healthcare Industry",
+      excerpt: "New artificial intelligence breakthrough promises to revolutionize patient care and medical diagnosis accuracy with unprecedented precision.",
+      date: "March 15, 2024",
+      category: "Technology",
+      image: "https://images.unsplash.com/photo-1677442135722-5f11e06a4e6d?w=400&h=250&fit=crop",
+      readTime: "5 min read"
+    },
+    {
+      id: 2,
+      title: "Sustainable Energy Solutions Gain Global Momentum",
+      excerpt: "Countries worldwide adopt innovative renewable energy projects to combat climate change effectively while boosting economic growth.",
+      date: "March 12, 2024",
+      category: "Environment",
+      image: "https://images.unsplash.com/photo-1497435334941-8c8934d3451f?w=400&h=250&fit=crop",
+      readTime: "7 min read"
+    },
+    {
+      id: 3,
+      title: "Future of Remote Work: Trends and Predictions 2024",
+      excerpt: "Experts analyze the evolving landscape of remote work and its lasting impact on global business operations and company culture.",
+      date: "March 10, 2024",
+      category: "Business",
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop",
+      readTime: "4 min read"
+    },
+    {
+      id: 4,
+      title: "Breakthrough in Quantum Computing Achieved",
+      excerpt: "Scientists successfully demonstrate quantum supremacy with new processor architecture that solves complex problems in minutes.",
+      date: "March 8, 2024",
+      category: "Technology",
+      image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=250&fit=crop",
+      readTime: "6 min read"
+    },
+    {
+      id: 5,
+      title: "Global Markets Respond to Economic Policy Changes",
+      excerpt: "Financial experts discuss implications of new monetary policies on international trade and investment opportunities.",
+      date: "March 5, 2024",
+      category: "Business",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop",
+      readTime: "5 min read"
+    },
+    {
+      id: 6,
+      title: "Innovative Education Platforms Transform Learning",
+      excerpt: "Digital learning solutions revolutionize classroom experiences with personalized AI-driven educational content delivery.",
+      date: "March 3, 2024",
+      category: "Education",
+      image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=400&h=250&fit=crop",
+      readTime: "4 min read"
+    }
+  ];
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/api/news");
-        if (!res.ok) {
-          throw new Error(`Gagal mengambil data: ${res.status} ${res.statusText}`);
-        }
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Respon bukan JSON");
-        }
-        const data = await res.json();
-        if (!Array.isArray(data)) {
-          throw new Error("Format data tidak valid");
-        }
-        const dataWithFlags = data.slice(0, 6).map((news) => ({
-          ...news,
-          imageLoaded: false,
-          imageError: false,
-        }));
-        setNewsList(dataWithFlags);
-      } catch (err) {
-        console.error("Fetch error:", err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // State untuk hover effects
+  const [hoveredCard, setHoveredCard] = React.useState(null);
+  const [hoveredButton, setHoveredButton] = React.useState(false);
+  const [hoveredReadMore, setHoveredReadMore] = React.useState(null);
 
-    fetchNews();
-  }, []);
-
-  useEffect(() => {
-    const timeoutIds = newsList
-      .filter((news) => news.image && !news.imageLoaded && !news.imageError)
-      .map((news) =>
-        setTimeout(() => {
-          setNewsList((prevList) =>
-            prevList.map((n) =>
-              n.id === news.id ? { ...n, imageError: true } : n
-            )
-          );
-        }, 120000)
-      );
-
-    return () => {
-      timeoutIds.forEach((id) => clearTimeout(id));
-    };
-  }, [newsList]);
-
-  const handleImageLoad = (id) => {
-    setNewsList((prevList) =>
-      prevList.map((news) =>
-        news.id === id ? { ...news, imageLoaded: true, imageError: false } : news
-      )
-    );
-  };
-
-  const handleImageError = (id) => {
-    setNewsList((prevList) =>
-      prevList.map((news) =>
-        news.id === id ? { ...news, imageError: true } : news
-      )
-    );
-  };
-
-  const retry = () => {
-    setLoading(true);
-    const updatedNews = newsList.map((news) => ({
-      ...news,
-      imageLoaded: false,
-      imageError: false,
-    }));
-    setNewsList(updatedNews);
-  };
-
-  if (loading && newsList.length === 0) {
-    return (
-      <section style={{ padding: "60px 20px", textAlign: "center" }}>
-        <h2 style={{ marginBottom: "2rem" }}>Latest News</h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1.5rem",
-            maxWidth: 900,
-            margin: "0 auto",
-          }}
-        >
-          {[...Array(6)].map((_, idx) => (
-            <div
-              key={`skeleton-${idx}`}
-              style={{
-                backgroundColor: "#f0f0f0",
-                borderRadius: "15px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                padding: "1rem",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  height: 150,
-                  backgroundColor: "#ddd",
-                  borderRadius: 10,
-                  marginBottom: "0.75rem",
-                  position: "relative",
-                }}
-              >
-                <img
-                  src="/icons/Lazy-Loading.gif"
-                  alt="Loading"
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "50%",
-                    height: "50%",
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  height: 20,
-                  backgroundColor: "#ddd",
-                  borderRadius: 4,
-                  marginBottom: "0.5rem",
-                }}
-              ></div>
-              <div
-                style={{
-                  height: 60,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexDirection: "column",
-                }}
-              >
-                <div
-                  style={{
-                    height: 10,
-                    backgroundColor: "#ddd",
-                    borderRadius: 4,
-                    marginBottom: 5,
-                  }}
-                ></div>
-                <div
-                  style={{
-                    height: 10,
-                    backgroundColor: "#ddd",
-                    borderRadius: 4,
-                    marginBottom: 5,
-                  }}
-                ></div>
-                <div
-                  style={{
-                    height: 10,
-                    backgroundColor: "#ddd",
-                    borderRadius: 4,
-                  }}
-                ></div>
-              </div>
-            </div>
-          ))}
+  const NewsCard = ({ news }) => (
+    <article 
+      className={`${styles.newsCard} ${hoveredCard === news.id ? styles.newsCardHover : ''}`}
+      onMouseEnter={() => setHoveredCard(news.id)}
+      onMouseLeave={() => setHoveredCard(null)}
+    >
+      <div className={styles.imageContainer}>
+        <img 
+          src={news.image} 
+          alt={news.title}
+          className={`${styles.newsImage} ${hoveredCard === news.id ? styles.imageHover : ''}`}
+        />
+        <span className={`${styles.categoryBadge} ${styles[news.category.toLowerCase()] || ''}`}>
+          {news.category}
+        </span>
+      </div>
+      
+      <div className={styles.content}>
+        <div className={styles.meta}>
+          <span className={styles.date}>{news.date}</span>
+          <span className={styles.readTime}>{news.readTime}</span>
         </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section
-        style={{
-          padding: "60px 20px",
-          textAlign: "center",
-          backgroundColor: "#fff0f0",
-        }}
-      >
-        <h3 style={{ color: "red" }}>Terjadi kesalahan</h3>
-        <p>{error}</p>
-        <button
-          onClick={retry}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "#0d6efd",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
+        
+        <h3 className={styles.newsTitle}>{news.title}</h3>
+        <p className={styles.excerpt}>{news.excerpt}</p>
+        
+        <button 
+          className={`${styles.readMore} ${hoveredReadMore === news.id ? styles.readMoreHover : ''}`}
+          onMouseEnter={() => setHoveredReadMore(news.id)}
+          onMouseLeave={() => setHoveredReadMore(null)}
         >
-          Coba Lagi
+          Read More →
         </button>
-      </section>
-    );
-  }
-
-  if (newsList.length === 0) {
-    return (
-      <section style={{ padding: "60px 20px", textAlign: "center" }}>
-        <h3>Tidak ada berita tersedia.</h3>
-        <p>Silakan cek kembali nanti.</p>
-      </section>
-    );
-  }
+      </div>
+    </article>
+  );
 
   return (
-    <section
-      style={{
-        backgroundColor: "white",
-        padding: "40px 20px",
-        marginTop: "120px",
-        color: "black",
-        minHeight: "100vh",
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 900,
-          margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1.5rem",
-        }}
-      >
-        <h2
-          style={{
-            gridColumn: "1 / -1",
-            textAlign: "center",
-            marginBottom: "2rem",
-            color: "black",
-          }}
-        >
-          Latest News
-        </h2>
+    <div>
+      <Head>
+        <title>News Section</title>
+        <meta name="description" content="Latest News" />
+      </Head>
 
-        {newsList.map((news) => (
-          <article
-            key={news.id}
-            style={{
-              position: "relative",
-              backgroundColor: "white",
-              borderRadius: "15px",
-              boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
-              padding: "1rem",
-              minHeight: "250px",
-              cursor: "pointer",
-              overflow: "hidden",
-              backgroundImage:
-                news.image && news.imageLoaded && !news.imageError
-                  ? `url(http://localhost:8000/storage/${news.image})`
-                  : "none",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = "0 12px 30px rgba(0,0,0,0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.3)";
-            }}
-            onClick={() => {
-              window.location.href = `/news/${news.title}`;
-            }}
-          >
-            {/* Overlay Transparan untuk Gambar */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  news.image && news.imageLoaded && !news.imageError
-                    ? "rgba(255, 255, 255, 0)"
-                    : "transparent",
-                zIndex: 1,
-                borderRadius: "15px",
-              }}
-            />
+      <section className={styles.newsSection}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Latest News</h2>
+            <p className={styles.subtitle}>Stay updated with our latest stories and insights</p>
+          </div>
 
-            {/* Loader SVG */}
-            {!news.imageLoaded && !news.imageError && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "50%",
-                  height: "50%",
-                  zIndex: 2,
-                }}
-              >
-                <img
-                  src="/icons/Lazy-Loading.gif"
-                  alt="Loading"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "block",
-                  }}
-                  onLoad={() => handleImageLoad(news.id)}
-                  onError={() => handleImageError(news.id)}
-                />
-              </div>
-            )}
+          <div className={styles.newsGrid}>
+            {newsData.map((news) => (
+              <NewsCard key={news.id} news={news} />
+            ))}
+          </div>
 
-            {/* Pesan Error */}
-            {!news.imageLoaded && news.imageError && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "90%",
-                  textAlign: "center",
-                  color: "#721c24",
-                  backgroundColor: "#7c7a7a2c",
-                  padding: "10px",
-                  borderRadius: "10px",
-                  fontSize: "0.9rem",
-                  fontWeight: "bold",
-                  zIndex: 2,
-                }}
-              >
-                Data tidak bisa dimuat
-              </div>
-            )}
-
-            {/* Judul dan Deskripsi */}
-            <div
-              style={{
-                position: "relative",
-                zIndex: 3,
-                padding: "1rem",
-                background:
-                  news.image && news.imageLoaded && !news.imageError
-                    ? "rgba(27, 26, 26, 0)"
-                    : "white",
-                borderRadius: "10px",
-              }}
+          <div className={styles.viewAllContainer}>
+            <button 
+              className={`${styles.viewAllButton} ${hoveredButton ? styles.viewAllButtonHover : ''}`}
+              onMouseEnter={() => setHoveredButton(true)}
+              onMouseLeave={() => setHoveredButton(false)}
             >
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                  marginBottom: "0.5rem",
-                  color: "rgba(255, 255, 255, 1)",
-                }}
-              >
-                {news.title}
-              </h3>
-            </div>
-          </article>
-        ))}
-
-        <div
-          style={{
-            gridColumn: "1 / -1",
-            textAlign: "center",
-            marginTop: "2rem",
-          }}
-        >
-          <button
-            style={{
-              padding: "0.6rem 1.2rem",
-              backgroundColor: "#0d6efd",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              cursor: "pointer",
-              transition: "background-color 0.3s ease",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#084cd9")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#0d6efd")
-            }
-            onClick={() => {
-              window.location.href = "/news";
-            }}
-          >
-            Selengkapnya
-          </button>
+              View All News
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
-}
+};
+
+export default NewsSection;
