@@ -1,0 +1,331 @@
+/* Global Variables */
+:root {
+  --surface-color: #fff;
+  --accent-color: #0d6efd;
+  --accent-hover: #0b5ed7;
+  --text-color: #222;
+  --text-muted: #555;
+  --border-radius: 15px;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
+}
+
+.sectionWrapper {
+  background-color: var(--surface-color);
+  padding: 4rem 1rem;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mainContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  /* overflow-x: hidden; */
+}
+
+/* Card Utama */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border-radius: var(--border-radius);
+  background-color: white;
+  box-shadow: 0 12px 32px var(--shadow-light);
+  width: 100%; 
+  max-width: 1100px;
+  min-height: 400px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid #e9ecef;
+  padding: 2rem;
+  gap: 3rem;
+  z-index: 1;
+  transition: transform var(--transition-speed),
+    box-shadow var(--transition-speed);
+  box-sizing: border-box;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 320px;
+  height: 300px;
+  flex-shrink: 0;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform var(--transition-speed);
+}
+.imageWrapper img {
+  object-fit: contain;
+  border-radius: var(--border-radius);
+}
+
+.textWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.textWrapper h3 {
+  font-size: 1.8rem;
+  color: var(--text-color);
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.5px;
+}
+.textWrapper p {
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.prevButton,
+.nextButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  font-size: 2.5rem;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+  transition: all var(--transition-speed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prevButton {
+  left: calc(50% - 50vw + 20px);
+}
+.nextButton {
+  right: calc(50% - 50vw + 20px);
+}
+
+/* .prevButton {
+  left: -70px; 
+}
+.nextButton {
+  right: -70px; 
+} */
+
+
+.prevButton:hover {
+  background-color: var(--accent-hover);
+  transform: translateX(-4px) translateY(-50%);
+}
+.nextButton:hover {
+  background-color: var(--accent-hover);
+  transform: translateX(4px) translateY(-50%);
+}
+
+.mobileNavButtons {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+.mobileNavButtons button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+  transition: background-color var(--transition-speed),
+    transform var(--transition-speed);
+}
+.mobileNavButtons button:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.slideInFromRight {
+  animation: slideInFromRight 0.6s ease-out forwards;
+}
+.slideInFromLeft {
+  animation: slideInFromLeft 0.6s ease-out forwards;
+}
+.slideContainer {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-sizing: border-box; 
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  cursor: zoom-out;
+}
+.modalContent {
+  position: relative;
+  user-select: none;
+  touch-action: none;
+  will-change: transform;
+}
+.modalCloseButton {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  z-index: 1060;
+  transition: background-color 0.3s ease;
+}
+.modalCloseButton:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 1200px) {
+  .prevButton {
+    left: calc(50% - 50vw + 15px);
+  }
+  .nextButton {
+    right: calc(50% - 50vw + 15px);
+  }
+  /* .prevButton {
+    left: -60px;
+  }
+  .nextButton {
+    right: -60px;
+  } */
+}
+
+@media (max-width: 992px) {
+  .prevButton {
+    left: calc(50% - 50vw + 10px);
+  }
+  .nextButton {
+    right: calc(50% - 50vw + 10px);
+  }
+  /* .prevButton {
+    left: -50px;
+  }
+  .nextButton {
+    right: -50px;
+  } */
+}
+
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px var(--shadow-light);
+    min-height: auto;
+  }
+  .imageWrapper {
+    width: 100%;
+    height: 240px;
+    margin-bottom: 1.2rem;
+    border-radius: var(--border-radius);
+  }
+  .textWrapper {
+    padding: 0;
+  }
+  .mobileNavButtons {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+  }
+  .prevButton,
+  .nextButton {
+    display: none;
+  }
+
+  .mainContainer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .slideContainer {
+    max-width: 100%;
+  }
+  .card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  .imageWrapper {
+    height: 200px;
+  }
+  .textWrapper {
+    padding: 0;
+  }
+  .textWrapper h3 {
+    font-size: 1.5rem;
+  }
+  .textWrapper p {
+    font-size: 0.9rem;
+  }
+  .mobileNavButtons {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+  .mobileNavButtons button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
