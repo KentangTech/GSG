@@ -114,7 +114,7 @@ export default function NewsDetail({ params }) {
                 }}
               >
                 <img
-                  src="/icons/Lazy-Loading.gif"
+                  src="/icons/data.gif"
                   alt="Loading"
                   style={{
                     width: "100%",

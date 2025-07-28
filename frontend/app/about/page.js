@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import Footer from "../components/footer";
-import '../globals.css';
+import "../globals.css";
 
 function shadeColor(color, percent) {
   let R = parseInt(color.substring(1, 3), 16);
@@ -64,7 +64,7 @@ function TypingText({ prefix, animatedText, index, isVisible, primaryBlue }) {
       } else if (isDeleting && displayText === "") {
         if (!isCancelled) {
           setIsDeleting(false);
-          setLoopNum(prev => prev + 1);
+          setLoopNum((prev) => prev + 1);
         }
         return;
       }
@@ -76,33 +76,33 @@ function TypingText({ prefix, animatedText, index, isVisible, primaryBlue }) {
       timerId = setTimeout(() => {
         if (isCancelled) return;
         setIsStarting(false);
-        
+
         const typeRecursive = () => {
           if (isCancelled || !isVisible) return;
-          
+
           const typingTimer = setTimeout(() => {
             handleTyping();
             typeRecursive();
           }, typeSpeed);
-          
+
           return typingTimer;
         };
-        
+
         const currentTimerId = typeRecursive();
         timerId = currentTimerId;
       }, startDelay);
     } else {
       const typeRecursive = () => {
         if (isCancelled || !isVisible) return;
-        
+
         const typingTimer = setTimeout(() => {
           handleTyping();
           typeRecursive();
         }, typeSpeed);
-        
+
         return typingTimer;
       };
-      
+
       const currentTimerId = typeRecursive();
       timerId = currentTimerId;
     }
@@ -116,28 +116,28 @@ function TypingText({ prefix, animatedText, index, isVisible, primaryBlue }) {
   }, [displayText, isDeleting, loopNum, isStarting, isVisible, animatedText]);
 
   return (
-    <h5 
+    <h5
       className="fw-bold"
-      style={{ 
+      style={{
         color: primaryBlue,
-        minHeight: '2rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        minHeight: "2rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {prefix}
       {displayText}
-      <span 
-        style={{ 
-          display: isStarting ? 'none' : 'inline-block',
-          width: '3px', 
-          height: '1.2em', 
-          backgroundColor: primaryBlue, 
-          marginLeft: '2px',
-          animation: 'smoothBlink 1.5s infinite',
-          opacity: 1
-        }} 
+      <span
+        style={{
+          display: isStarting ? "none" : "inline-block",
+          width: "3px",
+          height: "1.2em",
+          backgroundColor: primaryBlue,
+          marginLeft: "2px",
+          animation: "smoothBlink 1.5s infinite",
+          opacity: 1,
+        }}
       />
     </h5>
   );
@@ -192,7 +192,6 @@ export default function AboutPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Fungsi untuk modal gambar
   const openModal = (imageSrc) => {
     setModalImage(imageSrc);
     setScale(1);
@@ -206,7 +205,6 @@ export default function AboutPage() {
     document.body.style.overflow = "";
   };
 
-  // Fungsi untuk zoom gambar
   const handleWheel = (e) => {
     e.preventDefault();
     let newScale = scale - e.deltaY * 0.001;
@@ -278,7 +276,6 @@ export default function AboutPage() {
     setIsDragging(false);
   };
 
-  // Fungsi navigasi carousel
   const goToPrev = () => {
     const totalItems = bisnisData.length;
     const visibleItems = window.innerWidth <= 768 ? 2 : 4;
@@ -293,7 +290,6 @@ export default function AboutPage() {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
 
-  // Data untuk carousel bisnis
   const bisnisData = [
     {
       title: "Perdagangan Umum",
@@ -351,7 +347,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header dengan gradasi biru */}
       <div
         className="w-100 position-relative overflow-hidden"
         style={{
@@ -522,6 +517,7 @@ export default function AboutPage() {
                   className="w-100 h-100"
                   style={{ objectFit: "cover" }}
                 />
+
               </div>
             </div>
             <div className="col-lg-6 order-1 col-md-12">

@@ -84,85 +84,47 @@ body {
   height: 100vh;
   align-items: center;
   justify-content: center;
-  mask-image: url("/medias/lenskape.svg");
+  mask-image: url("/medias/landscape.svg");
   mask-position: 52.35% center;
   mask-repeat: no-repeat;
   mask-size: 80%;
-  -webkit-mask-image: url("/medias/lenskape.svg");
+  -webkit-mask-image: url("/medias/landscape.svg");
   -webkit-mask-position: 52.35% center;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: 80%;
 }
 
-@media (min-width: 1024px) {
+@media (orientation: portrait) {
+  .container {
+    height: 1000vh;
+  }
+
   .stickyMask {
-    mask-image: url("/medias/U-1024.svg");
+    mask-image: url("/medias/portrait.svg");
     mask-size: 80%;
     mask-position: 52.35% center;
-    -webkit-mask-image: url("/medias/U-1024.svg");
+    -webkit-mask-image: url("/medias/portrait.svg");
     -webkit-mask-size: 80%;
     -webkit-mask-position: 52.35% center;
+    height: 100vh;
   }
 }
 
-@media (min-width: 829px) and (max-width: 1023px) {
+@media (orientation: landscape) {
+  .container {
+    height: 300vh;
+  }
+}
+
+@media (orientation: landscape) {
   .stickyMask {
-    mask-image: url("/medias/U-829.svg");
-    mask-size: 70%;
+    mask-image: url("/medias/landscape.svg");
+    mask-size: 80%;
     mask-position: 52.35% center;
-    -webkit-mask-image: url("/medias/U-829.svg");
-    -webkit-mask-size: 70%;
+    -webkit-mask-image: url("/medias/landscape.svg");
+    -webkit-mask-size: 80%;
     -webkit-mask-position: 52.35% center;
-  }
-}
-
-@media (min-width: 766px) and (max-width: 828px) {
-  .main {
-    margin-bottom: 0;
-  }
-
-  .container {
-    height: 250vh;
-  }
-
-  .stickyMask {
-    mask-image: url("/medias/U-828.svg");
-    mask-size: 60%;
-    mask-position: 50% center;
-    -webkit-mask-image: url("/medias/U-828.svg");
-    -webkit-mask-size: 60%;
-    -webkit-mask-position: 50% center;
-  }
-}
-
-/* Media query untuk 767px ke bawah harus ditempatkan SEBELUM 766px */
-@media (max-width: 767px) and (min-width: 766px) {
-  .stickyMask {
-    mask-image: url("/medias/U-766.svg");
-    mask-size: 55%;
-    mask-position: 50% center;
-    -webkit-mask-image: url("/medias/U-766.svg");
-    -webkit-mask-size: 55%;
-    -webkit-mask-position: 50% center;
-  }
-
-  .container {
-    height: 220vh;
-  }
-}
-
-@media (max-width: 765px) {
-  .stickyMask {
-    -webkit-mask-image: url("/medias/vertikal.svg");
-    -webkit-mask-size: 40%;
-    -webkit-mask-position: center center;
-    mask-image: url("/medias/vertikal.svg");
-    mask-size: 40%;
-    mask-position: center center;
-  }
-
-  .container {
-    height: 200vh;
+    height: 100vh;
   }
 }
 
@@ -231,38 +193,6 @@ html {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-@media (min-width: 768px) and (max-width: 1024px) {
-  .movingBanner {
-    gap: 10px;
-  }
-  .logo-container {
-    width: 100%;
-    max-width: none;
-    height: 100px;
-  }
-  .bannerItem {
-    width: 100%;
-    max-width: none;
-    height: 100px;
-  }
-}
-
-@media (max-width: 767px) {
-  .movingBanner {
-    gap: 10px;
-  }
-  .logo-container {
-    width: 100%;
-    max-width: none;
-    height: 100px;
-  }
-  .bannerItem {
-    width: 100%;
-    max-width: none;
-    height: 100px;
-  }
 }
 
 .movingBanner {

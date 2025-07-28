@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from "react";
+import styles from "@/app/css/direksi.module.css";
 
 function useOnScreen(ref) {
   const [isIntersecting, setIntersecting] = useState(false);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -10,15 +10,12 @@ function useOnScreen(ref) {
       },
       { threshold: 0.2 }
     );
-
     const current = ref.current;
     if (current) observer.observe(current);
-
     return () => {
       if (current) observer.unobserve(current);
     };
   }, [ref]);
-
   return isIntersecting;
 }
 
@@ -58,225 +55,68 @@ export default function DireksiSection() {
   const direkturUtama = getDirekturByPosition("utama");
   const direkturKeuangan = getDirekturByPosition("keuangan");
   const direkturOperasional = getDirekturByPosition("operasional");
-
   const orderedDireksi = [direkturOperasional, direkturUtama, direkturKeuangan].filter(Boolean);
+
+  const renderSkeletonCards = (keyPrefix) => (
+    <div className={styles.cardContainer}>
+      {[...Array(3)].map((_, idx) => (
+        <div
+          key={`${keyPrefix}-${idx}`}
+          className={styles.card}
+        >
+          <div className={styles.loaderPlaceholder}>
+            <img
+              src="/icons/data.gif"
+              alt="Loading"
+              className={styles.loaderGif}
+            />
+          </div>
+          <div className={styles.skeletonText}></div>
+          <div className={styles.skeletonSubtext}></div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <section
       ref={ref}
-      className={`direksi-section ${isVisible ? "fade-in" : ""}`}
-      style={{
-        padding: "4rem 1rem 5rem",
-        backgroundColor: "transparent",
-        textAlign: "center",
-        transition: "all 1s ease",
-      }}
+      className={`${styles.direksiSection} ${isVisible ? styles.fadeIn : ""}`}
     >
       {loading ? (
-        <div className="d-flex flex-wrap justify-content-center gap-5">
-          {[...Array(3)].map((_, idx) => (
-            <div
-              key={`skeleton-${idx}`}
-              className="text-center"
-              style={{
-                width: "250px",
-                opacity: 0.7,
-              }}
-            >
-              <div
-                style={{
-                  width: "250px",
-                  height: "250px",
-                  borderRadius: "50%",
-                  backgroundColor: "#e0e0e0",
-                  marginBottom: "15px",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src="/icons/Lazy-Loading.gif"
-                  alt="Loading"
-                  style={{
-                    width: "50%",
-                    height: "50%",
-                    margin: "auto",
-                    display: "block",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  width: "80%",
-                  height: "20px",
-                  backgroundColor: "#e0e0e0",
-                  margin: "10px auto",
-                  borderRadius: "4px",
-                }}
-              ></div>
-              <div
-                style={{
-                  width: "60%",
-                  height: "16px",
-                  backgroundColor: "#e0e0e0",
-                  margin: "5px auto",
-                  borderRadius: "4px",
-                }}
-              ></div>
-            </div>
-          ))}
-        </div>
+        renderSkeletonCards('skeleton')
       ) : orderedDireksi.length === 0 ? (
-        <div className="d-flex flex-wrap justify-content-center gap-5">
-          {[...Array(3)].map((_, idx) => (
-            <div
-              key={`fallback-${idx}`}
-              className="text-center"
-              style={{
-                width: "250px",
-                opacity: 0.7,
-              }}
-            >
-              <div
-                style={{
-                  width: "250px",
-                  height: "250px",
-                  borderRadius: "50%",
-                  backgroundColor: "#e0e0e0",
-                  marginBottom: "15px",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src="/icons/Lazy-Loading.gif"
-                  alt="Loading"
-                  style={{
-                    width: "50%",
-                    height: "50%",
-                    margin: "auto",
-                    display: "block",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  width: "80%",
-                  height: "20px",
-                  backgroundColor: "#e0e0e0",
-                  margin: "10px auto",
-                  borderRadius: "4px",
-                }}
-              ></div>
-              <div
-                style={{
-                  width: "60%",
-                  height: "16px",
-                  backgroundColor: "#e0e0e0",
-                  margin: "5px auto",
-                  borderRadius: "4px",
-                }}
-              ></div>
-            </div>
-          ))}
-        </div>
+        renderSkeletonCards('fallback')
       ) : (
-        <div className="d-flex flex-wrap justify-content-center gap-5">
+        <div className={styles.cardContainer}>
           {orderedDireksi.map((person, idx) => (
             <div
               key={idx}
-              className="text-center"
-              style={{
-                width: "250px",
-                transform: isVisible ? "scale(1)" : "scale(0.9)",
-                opacity: isVisible ? 1 : 0.7,
-                transition: "all 0.6s ease",
-              }}
+              className={`${styles.card} ${isVisible ? styles.isVisible : ''}`}
             >
-              {/* Circular Card */}
               <div
-                style={{
-                  width: "250px",
-                  height: "250px",
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  border: "4px solid #4e73df",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-                  marginBottom: "15px",
-                  position: "relative",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.1)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
+                className={styles.circularCard}
               >
-                {/* Tampilkan SVG Loader selama gambar belum dimuat */}
                 {!person.imageLoaded && !person.imageError && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      width: "50%",
-                      height: "50%",
-                      zIndex: 1,
-                    }}
-                  >
+                  <div className={styles.imageLoaderContainer}>
                     <img
-                      src="/icons/Lazy-Loading.gif"
+                      src="/icons/data.gif"
                       alt="Loading"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "block",
-                      }}
+                      className={styles.loaderGif}
                     />
                   </div>
                 )}
-
-                {/* Tampilkan pesan error jika timeout */}
                 {!person.imageLoaded && person.imageError && (
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "#f8d7da",
-                      color: "#721c24",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      fontSize: "1rem",
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      textTransform: "uppercase",
-                      padding: "10px",
-                    }}
-                  >
+                  <div className={styles.errorMessage}>
                     Data tidak bisa dimuat
                   </div>
                 )}
-
-                {/* Gambar dengan onLoad dan onError */}
                 {person.image && !person.imageError && (
                   <img
                     src={person.image}
                     alt={person.name}
+                    className={styles.personImage}
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      transition: "opacity 0.3s ease",
                       opacity: person.imageLoaded ? 1 : 0,
                       visibility: person.imageLoaded ? "visible" : "hidden",
                     }}
@@ -305,12 +145,7 @@ export default function DireksiSection() {
                   />
                 )}
               </div>
-
-              {/* Nama dan Jabatan */}
-              <h4
-                className="mb-1"
-                style={{ fontWeight: "bold", color: "#222" }}
-              >
+              <h4 className="mb-1" style={{ fontWeight: "bold", color: "#222" }}>
                 {person.position}
               </h4>
               <p className="text-muted" style={{ fontSize: "1.1rem" }}>
@@ -320,18 +155,6 @@ export default function DireksiSection() {
           ))}
         </div>
       )}
-
-      <style jsx>{`
-        .direksi-section {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-
-        .direksi-section.fade-in {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      `}</style>
     </section>
   );
 }
