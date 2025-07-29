@@ -5,9 +5,6 @@ import {
   IoCall,
   IoMail,
   IoLocation,
-  IoLogoTwitter,
-  IoLogoFacebook,
-  IoLogoInstagram,
   IoHeart,
 } from "react-icons/io5";
 import Image from 'next/image';
@@ -75,7 +72,6 @@ const Footer = () => {
     e.preventDefault();
     setStatus("loading");
     setErrorMessage("");
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setStatus("success");
@@ -92,9 +88,7 @@ const Footer = () => {
   return (
     <footer className={`${styles.footerContainer} ${styles.compactFooter}`}>
       <div className="container">
-        {/* Row Utama untuk Desktop - Semua elemen sejajar horizontal */}
         <div className="row mt-2 d-none d-lg-flex align-items-start">
-          {/* Logo and Description - col-lg-3 */}
           <div className="col-lg-3 mb-lg-0 pe-4">
             <div className="mb-3">
               <Image
@@ -110,10 +104,8 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Vertical Divider */}
           <div className={`${styles.verticalDivider} d-none d-lg-block`}></div>
 
-          {/* Section Links - col-lg-1 */}
           <div className="col-lg-1 col-md-1 ps-lg-2">
             <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Section</h2>
             <ul className="list-unstyled">
@@ -127,7 +119,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Page Links - col-lg-1 */}
           <div className="col-lg-1">
             <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Page</h2>
             <ul className="list-unstyled">
@@ -141,9 +132,8 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Info - col-lg-3 */}
           <div className="col-lg-3">
-            <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Infomation</h2>
+            <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Information</h2>
             <ul className="list-unstyled">
               {informationDetails.map((info) => (
                 <li key={info.id} className={`${styles.contactDetailItem} ${styles.compactContactItem} mb-2`}>
@@ -160,9 +150,20 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
+            <div className="mt-3">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.706262957776!2d112.6332319747594!3d-7.159918092844621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd801ff93affa1b%3A0xec942db6bff11b05!2sPT%20Graha%20Sarana%20Gresik!5e0!3m2!1sid!2sid!4v1753779308685!5m2!1sid!2sid"
+                width="100%"
+                height="200"
+                style={{ border: 0, borderRadius: '8px' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Lokasi PT Graha Sarana Gresik"
+              ></iframe>
+            </div>
           </div>
 
-          {/* Contact Us Form - col-lg-4 */}
           <div className="col-lg-3 contactUsColumn">
             <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Contact Us</h2>
             <form onSubmit={handleSubmit} className={`${styles.contactForm} ${styles.compactForm}`} style={{ padding: '1.2rem', borderRadius: '8px' }}>
@@ -260,7 +261,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Row untuk Tablet/Mobile */}
         <div className="row mt-2 d-lg-none">
           <div className="col-12 mb-4 text-center">
             <div className="mb-3 d-flex justify-content-center">
@@ -276,7 +276,7 @@ const Footer = () => {
               PT Graha Sarana Gresik adalah perusahaan yang bergerak di bidang konstruksi dan pengembangan properti.
             </div>
           </div>
-          
+
           <div className="col-12 mb-4">
             <div className="row">
               <div className="col-6">
@@ -305,7 +305,7 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="col-12 mb-4">
             <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Contact Info</h2>
             <ul className="list-unstyled">
@@ -324,8 +324,20 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
+            <div className="mt-3">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.706262957776!2d112.6332319747594!3d-7.159918092844621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd801ff93affa1b%3A0xec942db6bff11b05!2sPT%20Graha%20Sarana%20Gresik!5e0!3m2!1sid!2sid!4v1753779308685!5m2!1sid!2sid"
+                width="100%"
+                height="150"
+                style={{ border: 0, borderRadius: '8px' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Lokasi PT Graha Sarana Gresik"
+              ></iframe>
+            </div>
           </div>
-          
+
           <div className="col-12 mb-4">
             <h2 className={`${styles.footerHeading} ${styles.compactHeading}`}>Contact Us</h2>
             <form onSubmit={handleSubmit} className={`${styles.contactForm} ${styles.compactForm}`} style={{ padding: '1.2rem', borderRadius: '8px' }}>
@@ -422,7 +434,7 @@ const Footer = () => {
             </form>
           </div>
         </div>
-        
+
         {/* Copyright and Social Media */}
         <div className="row mt-3 pt-3 border-top">
           <div className="col-12">
@@ -437,25 +449,6 @@ const Footer = () => {
                     PT Graha Sarana Gresik
                   </a>
                 </p>
-              </div>
-              <div className="col-md-6 text-md-end text-center">
-                <ul className={`${styles.ftcoFooterSocial} p-0 mb-0 d-flex justify-content-md-end justify-content-center`}>
-                  <li className={`${styles.ftcoAnimate} mx-2`}>
-                    <a href="#" title="Twitter" aria-label="Twitter" className={styles.socialIconLink}>
-                      <IoLogoTwitter size={18} className={styles.socialIconSvg} />
-                    </a>
-                  </li>
-                  <li className={`${styles.ftcoAnimate} mx-2`}>
-                    <a href="#" title="Facebook" aria-label="Facebook" className={styles.socialIconLink}>
-                      <IoLogoFacebook size={18} className={styles.socialIconSvg} />
-                    </a>
-                  </li>
-                  <li className={`${styles.ftcoAnimate} mx-2`}>
-                    <a href="#" title="Instagram" aria-label="Instagram" className={styles.socialIconLink}>
-                      <IoLogoInstagram size={18} className={styles.socialIconSvg} />
-                    </a>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>

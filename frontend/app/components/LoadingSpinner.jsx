@@ -1,27 +1,25 @@
 import React from 'react';
+import styles from '@/app/css/LoadingSpinner.module.css';
 
 const LoadingSpinner = () => {
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: '#fff',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 9999,
-    }}>
-      <img
-        src="/icons/Loading.gif"
-        alt="Loading..."
-        style={{
-          width: '100px',
-          height: '100px',
-        }}
-      />
+    <div className={styles.loadingOverlay}>
+      <div className={styles.loadingContainer}>
+        {/* Animasi Pencarian Data */}
+        <div className={styles.searchAnimation}>
+          <div className={styles.searchIcon}></div>
+          <div className={styles.dataStream}>
+            {[...Array(5)].map((_, i) => (
+              <div 
+                key={i} 
+                className={styles.dataPacket}
+                style={{ animationDelay: `${i * 0.2}s` }}
+              ></div>
+            ))}
+          </div>
+        </div>
+        <p className={styles.loadingText}>Mencari Data...</p>
+      </div>
     </div>
   );
 };

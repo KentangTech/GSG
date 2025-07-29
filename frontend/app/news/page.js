@@ -1,10 +1,79 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Navigation from "../components/Navigation";
+import Navigation from "../components/NavigationALT";
 import Footer from "../components/footer";
-import styles from "../page.module.css";
+import styles from "@/app/css/NewsPage.module.css";
 import '../globals.css';
+
+// --- Komponen CustomCategoryDropdown ---
+const CustomCategoryDropdown = ({ categories, selectedCategory, onSelectCategory }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelect = (category) => {
+    onSelectCategory(category);
+    setIsOpen(false); // Tutup dropdown setelah memilih
+  };
+
+  // Opsional: Tutup dropdown jika klik di luar (memerlukan useEffect tambahan dan useRef)
+  // Untuk contoh ini, kita fokus pada toggle sederhana.
+
+  return (
+    <div className={styles.customDropdown}>
+      {/* Header Dropdown yang dapat diklik */}
+      <div className={styles.dropdownHeader} onClick={handleToggle}>
+        <span>{selectedCategory}</span>
+        {/* Panah yang berputar saat dibuka */}
+        <span className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ''}`}>▼</span>
+      </div>
+      
+      {/* Kontainer untuk animasi overflow */}
+      <div className={styles.dropdownListContainer}>
+        {/* Daftar item dengan kelas 'open' untuk animasi */}
+        <ul className={`${styles.dropdownList} ${isOpen ? styles.open : ''}`}>
+          {categories.map((category) => (
+            <li
+              key={category}
+              className={`${styles.dropdownItem} ${selectedCategory === category ? styles.dropdownItemSelected : ''}`}
+              onClick={() => handleSelect(category)}
+            >
+              {category}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+// --- Akhir Komponen CustomCategoryDropdown ---
+
+// --- Komponen LoadingSpinner (menggunakan GIF) ---
+const LoadingSpinner = ({ className }) => (
+  // Kontainer penuh layar untuk memastikan penempatan absolut bekerja dengan benar
+  <div style={{ 
+    position: 'fixed', // Menggunakan fixed untuk menutupi seluruh viewport
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Latar belakang semi-transparan opsional
+    zIndex: 9999 // Z-index tinggi untuk berada di atas konten lain
+  }}>
+    <img
+      src="/icons/data.gif" // Menggunakan path GIF yang diminta
+      alt="Loading..."
+      className={styles.loadingGif} // Menggunakan className dari CSS untuk ukuran
+    />
+  </div>
+);
+// --- Akhir Komponen LoadingSpinner ---
 
 export default function NewsPage() {
   const router = useRouter();
@@ -13,70 +82,101 @@ export default function NewsPage() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const newsPerPage = 6;
 
-  // Dummy data berita
+  // Dummy data berita dengan kategori
   const dummyNews = [
     {
       id: 1,
-      title: "Judul Berita 1",
-      content: "Isi berita 1...",
-      image: "/image/news1.jpg",
+      title: "Revolutionary AI Technology Transforms Healthcare Industry",
+      excerpt: "New artificial intelligence breakthrough promises to revolutionize patient care and medical diagnosis accuracy with unprecedented precision.",
+      image: "/image/visi-&-misi.jpg",
+      category: "Technology",
+      date: "March 15, 2024",
+      readTime: "5 min read"
     },
     {
       id: 2,
-      title: "Judul Berita 2",
-      content: "Isi berita 2...",
+      title: "Sustainable Energy Solutions Gain Global Momentum",
+      excerpt: "Countries worldwide adopt innovative renewable energy projects to combat climate change effectively while boosting economic growth.",
       image: "/image/news2.jpg",
+      category: "Environment",
+      date: "March 12, 2024",
+      readTime: "7 min read"
     },
     {
       id: 3,
-      title: "Judul Berita 3",
-      content: "Isi berita 3...",
+      title: "Future of Remote Work: Trends and Predictions 2024",
+      excerpt: "Experts analyze the evolving landscape of remote work and its lasting impact on global business operations and company culture.",
       image: "/image/news3.jpg",
+      category: "Business",
+      date: "March 10, 2024",
+      readTime: "4 min read"
     },
     {
       id: 4,
-      title: "Judul Berita 4",
-      content: "Isi berita 4...",
+      title: "Breakthrough in Quantum Computing Achieved",
+      excerpt: "Scientists successfully demonstrate quantum supremacy with new processor architecture that solves complex problems in minutes.",
       image: "/image/news4.jpg",
+      category: "Technology",
+      date: "March 8, 2024",
+      readTime: "6 min read"
     },
     {
       id: 5,
-      title: "Judul Berita 5",
-      content: "Isi berita 5...",
+      title: "Global Markets Respond to Economic Policy Changes",
+      excerpt: "Financial experts discuss implications of new monetary policies on international trade and investment opportunities.",
       image: "/image/news5.jpg",
+      category: "Business",
+      date: "March 5, 2024",
+      readTime: "5 min read"
     },
     {
       id: 6,
-      title: "Judul Berita 6",
-      content: "Isi berita 6...",
+      title: "Innovative Education Platforms Transform Learning",
+      excerpt: "Digital learning solutions revolutionize classroom experiences with personalized AI-driven educational content delivery.",
       image: "/image/news6.jpg",
+      category: "Education",
+      date: "March 3, 2024",
+      readTime: "4 min read"
     },
     {
       id: 7,
-      title: "Judul Berita 7",
-      content: "Isi berita 7...",
+      title: "Global Climate Summit Reaches Historic Agreement",
+      excerpt: "World leaders unite on ambitious new climate targets with binding commitments for carbon neutrality by 2050.",
       image: "/image/news7.jpg",
+      category: "Environment",
+      date: "February 28, 2024",
+      readTime: "8 min read"
     },
     {
       id: 8,
-      title: "Judul Berita 8",
-      content: "Isi berita 8...",
+      title: "Revolution in Biotechnology: Gene Therapy Breakthrough",
+      excerpt: "Scientists achieve major milestone in treating genetic disorders with new gene editing techniques showing 95% success rate.",
       image: "/image/news8.jpg",
-    },
-    {
-      id: 9,
-      title: "Judul Berita 9",
-      content: "Isi berita 9...",
-      image: "/image/news9.jpg",
-    },
-    {
-      id: 10,
-      title: "Judul Berita 10",
-      content: "Isi berita 10...",
-      image: "/image/news10.jpg",
+      category: "Technology",
+      date: "February 25, 2024",
+      readTime: "6 min read"
     },
   ];
+
+  // Daftar kategori unik
+  const categories = ["All", ...new Set(dummyNews.map(news => news.category))];
+
+  // Filter berita berdasarkan kategori dan pencarian
+  const filteredNews = dummyNews.filter(news => {
+    const matchesCategory = selectedCategory === "All" || news.category === selectedCategory;
+    const matchesSearch = news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         news.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Hitung halaman
+  const totalPages = Math.ceil(filteredNews.length / newsPerPage);
+  const indexOfLastNews = currentPage * newsPerPage;
+  const indexOfFirstNews = indexOfLastNews - newsPerPage;
+  const currentNews = filteredNews.slice(indexOfFirstNews, indexOfLastNews);
 
   // Tambahkan flag imageLoaded dan imageError
   useEffect(() => {
@@ -88,60 +188,11 @@ export default function NewsPage() {
       }));
       setNewsList(newsWithFlags);
       setLoading(false);
-    }, 1000);
-
+    }, 1500); // Simulasi loading selama 1.5 detik
     return () => clearTimeout(timer);
   }, []);
 
-  // Timeout untuk gambar yang tidak dimuat dalam 2 menit
-  useEffect(() => {
-    const timeoutIds = newsList
-      .filter((news) => news.image && !news.imageLoaded && !news.imageError)
-      .map((news) =>
-        setTimeout(() => {
-          setNewsList((prev) =>
-            prev.map((n) => (n.id === news.id ? { ...n, imageError: true } : n))
-          );
-        }, 120000)
-      );
-
-    return () => {
-      timeoutIds.forEach((id) => clearTimeout(id));
-    };
-  }, [newsList]);
-
-  const handleImageLoad = (id) => {
-    setNewsList((prev) =>
-      prev.map((news) =>
-        news.id === id
-          ? { ...news, imageLoaded: true, imageError: false }
-          : news
-      )
-    );
-  };
-
-  const handleImageError = (id) => {
-    setNewsList((prev) =>
-      prev.map((news) =>
-        news.id === id ? { ...news, imageError: true } : news
-      )
-    );
-  };
-
-  // Hitung jumlah berita yang ditampilkan
-  const newsPerPage = 5;
-  const filteredNews = newsList.filter(
-    (news) =>
-      news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      news.content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredNews.length / newsPerPage);
-  const currentNews = filteredNews.slice(
-    (currentPage - 1) * newsPerPage,
-    currentPage * newsPerPage
-  );
-
+  // Navigasi halaman
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -154,104 +205,33 @@ export default function NewsPage() {
     }
   };
 
-  // Hitung start dan end
-  const start = (currentPage - 1) * newsPerPage + 1;
-  const end = Math.min(currentPage * newsPerPage, filteredNews.length);
-  const totalNews = filteredNews.length;
+  // Handler untuk memuat gambar
+  const handleImageLoad = (id) => {
+    setNewsList(prev => prev.map(news =>
+      news.id === id ? {...news, imageLoaded: true} : news
+    ));
+  };
 
+  const handleImageError = (id) => {
+    setNewsList(prev => prev.map(news =>
+      news.id === id ? {...news, imageError: true} : news
+    ));
+  };
+
+  // Tampilkan komponen LoadingSpinner jika masih loading halaman utama
   if (loading) {
-    return (
-      <section style={{ padding: "60px 20px", textAlign: "center" }}>
-        <h2 style={{ marginBottom: "2rem" }}>Latest News</h2>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.5rem",
-            maxWidth: 900,
-            margin: "0 auto",
-          }}
-        >
-          {[...Array(5)].map((_, idx) => (
-            <div
-              key={`skeleton-${idx}`}
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "1rem",
-                backgroundColor: "#f0f0f0",
-                borderRadius: "15px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                padding: "1rem",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: "120px",
-                  height: "90px",
-                  backgroundColor: "#ddd",
-                  position: "relative",
-                }}
-              >
-                <img
-                  src="/icons/Lazy-Loading.gif"
-                  alt="Loading"
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "50%",
-                    height: "50%",
-                  }}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    height: 20,
-                    backgroundColor: "#ddd",
-                    borderRadius: "4px",
-                    marginBottom: "0.5rem",
-                  }}
-                ></div>
-                <div
-                  style={{
-                    height: 40,
-                    backgroundColor: "#ddd",
-                    borderRadius: "4px",
-                  }}
-                ></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
+    return <LoadingSpinner />;
   }
 
+  // Tampilkan error jika ada
   if (error) {
     return (
-      <section
-        style={{
-          padding: "60px 20px",
-          textAlign: "center",
-          backgroundColor: "#fff0f0",
-        }}
-      >
-        <h3 style={{ color: "red" }}>Terjadi kesalahan</h3>
-        <p>{error}</p>
+      <section className={styles.errorSection}>
+        <h3 className={styles.errorTitle}>Terjadi kesalahan</h3>
+        <p className={styles.errorMessage}>{error}</p>
         <button
+          className={styles.retryButton}
           onClick={() => window.location.reload()}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "#0d6efd",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
         >
           Coba Lagi
         </button>
@@ -262,249 +242,166 @@ export default function NewsPage() {
   return (
     <>
       <Navigation />
-
       <main className={styles.main}>
-        <section
-          style={{
-            backgroundColor: "white",
-            padding: "40px 20px",
-            color: "black",
-            minHeight: "100vh",
-            boxSizing: "border-box",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: 900,
-              margin: "0 auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
-            }}
-          >
-            <h2
-              style={{
-                textAlign: "center",
-                marginBottom: "2rem",
-                color: "black",
-              }}
-            >
-              Latest News
-            </h2>
-
+        <section className={styles.newsSection}>
+          <div className={styles.container}>
+            <div className={styles.header}>
+              {/* Judul yang Ditingkatkan */}
+              <h1 className={styles.modernTitle}>
+                <span className={styles.titleHighlight}>Latest</span> News & Insights
+              </h1>
+              <p className={styles.subtitle}>
+                Stay updated with our latest stories and industry insights
+              </p>
+            </div>
             {/* Search Bar */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div className={styles.searchContainer}>
               <input
                 type="text"
-                placeholder="Cari berita..."
+                placeholder="Search news..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                style={{
-                  padding: "0.6rem 1.2rem",
-                  width: "100%",
-                  maxWidth: "600px",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc",
-                  fontSize: "1rem",
+                className={styles.searchInput}
+              />
+            </div>
+
+            {/* Dropdown Kategori Kustom untuk Layar Kecil/Portrait */}
+            {/* Hanya ditampilkan berdasarkan media query CSS */}
+            <div className={styles.categoryDropdown}>
+              <CustomCategoryDropdown
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onSelectCategory={(category) => {
+                  setSelectedCategory(category);
+                  setCurrentPage(1);
                 }}
               />
             </div>
 
-            {/* News List */}
-            {currentNews.map((news) => {
-              const slug = news.title
-                .toLowerCase()
-                .replace(/\s+/g, "-")
-                .replace(/[^\w\-]+/g, "");
-
-              return (
-                <article
-                  key={news.id}
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    backgroundColor: "white",
-                    color: "#222",
-                    borderRadius: "15px",
-                    boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
-                    padding: "1rem",
-                    position: "relative",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    transition: "transform 0.3s ease",
-                  }}
-                  onClick={() => router.push(`/news/${slug}`)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.boxShadow =
-                      "0 12px 24px rgba(0,0,0,0.2)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.boxShadow =
-                      "0 8px 20px rgba(0,0,0,0.1)")
-                  }
-                >
-                  {/* Gambar Berita */}
-                  <div
-                    style={{
-                      width: "120px",
-                      height: "90px",
-                      backgroundColor: "#ddd",
-                      position: "relative",
-                      overflow: "hidden",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    {/* Loader SVG */}
-                    {!news.imageLoaded && !news.imageError && (
-                      <img
-                        src="/icons/Lazy-Loading.gif"
-                        alt="Loading"
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          width: "50%",
-                          height: "50%",
-                          zIndex: 1,
-                        }}
-                      />
-                    )}
-
-                    {/* Pesan Error */}
-                    {!news.imageLoaded && news.imageError && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          width: "90%",
-                          textAlign: "center",
-                          color: "#721c24",
-                          backgroundColor: "#f8d7da",
-                          padding: "10px",
-                          borderRadius: "10px",
-                          fontSize: "0.9rem",
-                          fontWeight: "bold",
-                          zIndex: 2,
-                        }}
-                      >
-                        Gambar tidak tersedia
-                      </div>
-                    )}
-
-                    {/* Gambar Berita */}
-                    {news.image && !news.imageError && (
-                      <img
-                        src={news.image}
-                        alt={news.title}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          opacity: news.imageLoaded ? 1 : 0,
-                          transition: "opacity 0.3s ease",
-                        }}
-                        loading="lazy"
-                        onLoad={() => handleImageLoad(news.id)}
-                        onError={() => handleImageError(news.id)}
-                      />
-                    )}
-                  </div>
-
-                  {/* Teks Berita */}
-                  <div style={{ flex: 1, paddingLeft: "1rem" }}>
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontSize: "1.1rem",
-                        fontWeight: "bold",
-                        marginBottom: "0.5rem",
+            {/* Layout Kategori dan Konten */}
+            <div className={styles.contentLayout}>
+              {/* Sidebar Kategori untuk Layar Besar/Landscape */}
+              {/* Hanya ditampilkan berdasarkan media query CSS */}
+              <div className={styles.sidebar}>
+                <h3 className={styles.sidebarTitle}>Categories</h3>
+                <div className={styles.categoryList}>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setSelectedCategory(category);
+                        setCurrentPage(1);
                       }}
+                      className={`${styles.categoryButton} ${
+                        selectedCategory === category ? styles.activeCategory : ''
+                      }`}
                     >
-                      {news.title}
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: "0.95rem",
-                        color: "#444",
-                        overflow: "hidden",
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: "vertical",
-                        display: "-webkit-box",
-                      }}
-                    >
-                      {news.content}
-                    </p>
-                  </div>
-                </article>
-              );
-            })}
-
-            {/* Pagination */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "1rem",
-                marginTop: "2rem",
-              }}
-            >
-              <button
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: currentPage === 1 ? "#ccc" : "#0d6efd",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                }}
-              >
-                ← Sebelumnya
-              </button>
-              {/* Keterangan jumlah berita */}
-              <div
-                style={{
-                  textAlign: "center",
-                  fontSize: "0.95rem",
-                  color: "#555",
-                }}
-              >
-                Menampilkan <strong>{start}</strong>–<strong>{end}</strong> dari{" "}
-                <strong>{totalNews}</strong> berita
+                      {category}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor:
-                    currentPage === totalPages ? "#ccc" : "#0d6efd",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor:
-                    currentPage === totalPages ? "not-allowed" : "pointer",
-                }}
-              >
-                Selanjutnya →
-              </button>
+              {/* Konten Berita */}
+              <div className={styles.newsContent}>
+                {/* Grid Berita */}
+                <div className={styles.newsGrid}>
+                  {currentNews.map((news) => {
+                    const slug = news.title.toLowerCase().replace(/\s+/g, '-');
+                    return (
+                      <article
+                        key={news.id}
+                        className={styles.newsCard}
+                        onClick={() => router.push(`/news/${slug}`)}
+                      >
+                        <div className={styles.imageContainer}>
+                          {/* Gunakan GIF Loading yang dipusatkan dan diperbesar oleh CSS (.loaderImage) */}
+                          {!news.imageLoaded && !news.imageError && (
+                            <img
+                              src="/icons/data.gif" // Menggunakan path GIF yang diminta
+                              alt="Loading..."
+                              className={styles.loaderImage} // Gaya CSS ini sudah diatur untuk memusatkan dan memperbesar
+                            />
+                          )}
+                          {/* Pesan Error */}
+                          {!news.imageLoaded && news.imageError && (
+                            <div className={styles.errorMessageImage}>
+                              Image not available
+                            </div>
+                          )}
+                          {/* Gambar Berita */}
+                          {news.image && !news.imageError && (
+                            <img
+                              src={news.image}
+                              alt={news.title}
+                              onLoad={() => handleImageLoad(news.id)}
+                              onError={() => handleImageError(news.id)}
+                              className={`${styles.newsImage} ${
+                                news.imageLoaded ? styles.imageLoaded : ''
+                              }`}
+                            />
+                          )}
+                        </div>
+                        <div className={styles.cardContent}>
+                          {/* Kategori */}
+                          <span className={`${styles.categoryBadge} ${styles[news.category.toLowerCase()] || ''}`}>
+                            {news.category}
+                          </span>
+                          <h3 className={styles.newsTitle}>{news.title}</h3>
+                          {/* Meta Info */}
+                          <div className={styles.metaInfo}>
+                            <span className={styles.date}>{news.date}</span>
+                            <span className={styles.readTime}>{news.readTime}</span>
+                          </div>
+                          <p className={styles.excerpt}>{news.excerpt}</p>
+                          <button className={styles.readMoreButton}>
+                            Read More →
+                          </button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className={styles.paginationContainer}>
+                    <button
+                      onClick={goToPrevPage}
+                      disabled={currentPage === 1}
+                      className={`${styles.paginationButton} ${
+                        currentPage === 1 ? styles.disabledButton : ''
+                      }`}
+                    >
+                      ← Previous
+                    </button>
+                    {/* Keterangan jumlah berita */}
+                    <div className={styles.paginationInfo}>
+                      <span>
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <span>•</span>
+                      <span>
+                        {filteredNews.length} articles found
+                      </span>
+                    </div>
+                    <button
+                      onClick={goToNextPage}
+                      disabled={currentPage === totalPages}
+                      className={`${styles.paginationButton} ${
+                        currentPage === totalPages ? styles.disabledButton : ''
+                      }`}
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
       </main>
-
       <Footer />
     </>
   );

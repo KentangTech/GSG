@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "@/app/components/footer";
 import RelatedNews from "./RelatedNews";
+import Navigation from "@/app/components/NavigationALT";
 import '@/app/globals.css';
 
 export default function NewsDetail({ params }) {
@@ -54,6 +55,7 @@ export default function NewsDetail({ params }) {
 
   return (
     <>
+    <Navigation/>
       <section
         style={{
           backgroundColor: "white",
