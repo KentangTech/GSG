@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import Footer from "../components/footer";
+import Navigation from "../components/NavigationALT";
 import "../globals.css";
 
 function shadeColor(color, percent) {
@@ -346,6 +347,7 @@ export default function AboutPage() {
   const visibleItemsMobile = 2;
 
   return (
+    <><Navigation />
     <div className="min-h-screen bg-white">
       <div
         className="w-100 position-relative overflow-hidden"
@@ -361,58 +363,6 @@ export default function AboutPage() {
             marginTop: "-1rem",
           }}
         >
-          <div
-            className="container"
-            style={{
-              paddingLeft: "1.5rem",
-              paddingRight: "1.5rem",
-              paddingTop: "4.5rem",
-              paddingBottom: "1.2rem",
-            }}
-          >
-            <Link
-              href="/"
-              className="d-inline-flex align-items-center text-decoration-none text-white shadow-sm"
-              style={{
-                fontSize: "1rem",
-                fontWeight: "600",
-                padding: "0.6rem 1.2rem",
-                borderRadius: "12px",
-                backgroundColor: "rgba(255, 255, 255, 0.18)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255, 255, 255, 0.25)",
-                transition: "all 0.3s ease",
-                opacity: isVisible["backBtn"] ? 1 : 0,
-                transform: isVisible["backBtn"]
-                  ? "translateY(0)"
-                  : "translateY(-10px)",
-                transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
-                e.target.style.transform = "translateY(-3px)";
-                e.target.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "rgba(255, 255, 255, 0.18)";
-                e.target.style.transform = "none";
-                e.target.style.boxShadow = "none";
-              }}
-              aria-label="Kembali ke halaman utama"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                style={{ marginRight: "0.5rem" }}
-              >
-                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-              </svg>
-              <span>Kembali ke Beranda</span>
-            </Link>
-          </div>
           <div
             className="container"
             style={{
@@ -505,19 +455,17 @@ export default function AboutPage() {
                 onMouseEnter={(e) => {
                   e.target.style.transform = "scale(1.02)";
                   e.target.style.boxShadow = "0 16px 40px rgba(0,0,0,0.15)";
-                }}
+                } }
                 onMouseLeave={(e) => {
                   e.target.style.transform = "none";
                   e.target.style.boxShadow = "0 12px 32px rgba(0,0,0,0.1)";
-                }}
+                } }
               >
                 <img
                   src="/image/visi-&-misi.jpg"
                   alt="PT Graha Sarana Gresik"
                   className="w-100 h-100"
-                  style={{ objectFit: "cover" }}
-                />
-
+                  style={{ objectFit: "cover" }} />
               </div>
             </div>
             <div className="col-lg-6 order-1 col-md-12">
@@ -625,9 +573,7 @@ export default function AboutPage() {
                     transform: isVisible[`${6 + index}`]
                       ? "translateY(0)"
                       : "translateY(30px)",
-                    transition: `all 1s cubic-bezier(0.4, 0, 0.2, 1) ${
-                      0.7 + index * 0.1
-                    }s`,
+                    transition: `all 1s cubic-bezier(0.4, 0, 0.2, 1) ${0.7 + index * 0.1}s`,
                   }}
                 >
                   <div className="fs-1 mb-3">🚀</div>
@@ -637,8 +583,7 @@ export default function AboutPage() {
                     animatedText={item.animatedText}
                     index={index}
                     isVisible={isVisible[`${6 + index}`]}
-                    primaryBlue={primaryBlue}
-                  />
+                    primaryBlue={primaryBlue} />
                   <p className="text-muted">{item.desc}</p>
                 </div>
               </div>
@@ -684,11 +629,11 @@ export default function AboutPage() {
                 onMouseEnter={(e) => {
                   e.target.style.backgroundColor = primaryBlue;
                   e.target.style.color = "white";
-                }}
+                } }
                 onMouseLeave={(e) => {
                   e.target.style.backgroundColor = "white";
                   e.target.style.color = primaryBlue;
-                }}
+                } }
                 aria-label="Sebelumnya"
               >
                 <svg
@@ -704,11 +649,9 @@ export default function AboutPage() {
               <div
                 className="d-flex w-100"
                 style={{
-                  transform: `translateX(-${
-                    (currentIndex /
+                  transform: `translateX(-${(currentIndex /
                       Math.max(totalItems - visibleItemsDesktop, 1)) *
-                    100
-                  }%)`,
+                    100}%)`,
                   transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
@@ -725,27 +668,25 @@ export default function AboutPage() {
                           height: "180px",
                           backgroundColor: "#f8f9fa",
                           cursor: "zoom-in",
-                          transition:
-                            "transform 0.3s ease, box-shadow 0.3s ease",
+                          transition: "transform 0.3s ease, box-shadow 0.3s ease",
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.transform = "scale(1.03)";
                           e.target.style.boxShadow =
                             "0 12px 24px rgba(0,0,0,0.15)";
-                        }}
+                        } }
                         onMouseLeave={(e) => {
                           e.target.style.transform = "none";
                           e.target.style.boxShadow =
                             "0 6px 12px rgba(0,0,0,0.1)";
-                        }}
+                        } }
                         onClick={() => openModal(item.image)}
                       >
                         <img
                           src={item.image}
                           alt={item.title}
                           className="w-100 h-100"
-                          style={{ objectFit: "cover" }}
-                        />
+                          style={{ objectFit: "cover" }} />
                       </div>
                       <h6 className="fw-bold" style={{ color: primaryBlue }}>
                         {item.title}
@@ -782,11 +723,11 @@ export default function AboutPage() {
                 onMouseEnter={(e) => {
                   e.target.style.backgroundColor = primaryBlue;
                   e.target.style.color = "white";
-                }}
+                } }
                 onMouseLeave={(e) => {
                   e.target.style.backgroundColor = "white";
                   e.target.style.color = primaryBlue;
-                }}
+                } }
                 aria-label="Berikutnya"
               >
                 <svg
@@ -804,11 +745,9 @@ export default function AboutPage() {
               <div
                 className="d-flex"
                 style={{
-                  transform: `translateX(-${
-                    (currentIndex /
+                  transform: `translateX(-${(currentIndex /
                       Math.max(totalItems - visibleItemsMobile, 1)) *
-                    100
-                  }%)`,
+                    100}%)`,
                   transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
@@ -825,27 +764,25 @@ export default function AboutPage() {
                           height: "160px",
                           backgroundColor: "#f8f9fa",
                           cursor: "zoom-in",
-                          transition:
-                            "transform 0.3s ease, box-shadow 0.3s ease",
+                          transition: "transform 0.3s ease, box-shadow 0.3s ease",
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.transform = "scale(1.02)";
                           e.target.style.boxShadow =
                             "0 10px 20px rgba(0,0,0,0.12)";
-                        }}
+                        } }
                         onMouseLeave={(e) => {
                           e.target.style.transform = "none";
                           e.target.style.boxShadow =
                             "0 6px 12px rgba(0,0,0,0.1)";
-                        }}
+                        } }
                         onClick={() => openModal(item.image)}
                       >
                         <img
                           src={item.image}
                           alt={item.title}
                           className="w-100 h-100"
-                          style={{ objectFit: "cover" }}
-                        />
+                          style={{ objectFit: "cover" }} />
                       </div>
                       <h6 className="fw-bold" style={{ color: primaryBlue }}>
                         {item.title}
@@ -881,11 +818,11 @@ export default function AboutPage() {
                 onMouseEnter={(e) => {
                   e.target.style.backgroundColor = primaryBlue;
                   e.target.style.color = "white";
-                }}
+                } }
                 onMouseLeave={(e) => {
                   e.target.style.backgroundColor = "white";
                   e.target.style.color = primaryBlue;
-                }}
+                } }
                 aria-label="Sebelumnya"
               >
                 Sebelumnya
@@ -902,11 +839,11 @@ export default function AboutPage() {
                 onMouseEnter={(e) => {
                   e.target.style.backgroundColor = primaryBlue;
                   e.target.style.color = "white";
-                }}
+                } }
                 onMouseLeave={(e) => {
                   e.target.style.backgroundColor = "white";
                   e.target.style.color = primaryBlue;
-                }}
+                } }
                 aria-label="Berikutnya"
               >
                 Berikutnya
@@ -958,12 +895,10 @@ export default function AboutPage() {
                 objectFit: "contain",
                 transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
                 transition: isDragging ? "none" : "transform 0.1s ease-out",
-                cursor:
-                  scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-out",
+                cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-out",
                 position: "relative",
                 zIndex: 1,
-              }}
-            />
+              }} />
             <div
               className="position-absolute bottom-0 end-0 bg-black text-white px-2 py-1 rounded"
               style={{ fontSize: "0.8rem", zIndex: 2 }}
@@ -991,6 +926,6 @@ export default function AboutPage() {
           }
         }
       `}</style>
-    </div>
+    </div></>
   );
 }

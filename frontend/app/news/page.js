@@ -4,41 +4,39 @@ import { useRouter } from "next/navigation";
 import Navigation from "../components/NavigationALT";
 import Footer from "../components/footer";
 import styles from "@/app/css/NewsPage.module.css";
-import '../globals.css';
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+import "../globals.css";
 
-// --- Komponen CustomCategoryDropdown ---
-const CustomCategoryDropdown = ({ categories, selectedCategory, onSelectCategory }) => {
+const CustomCategoryDropdown = ({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
-
   const handleSelect = (category) => {
     onSelectCategory(category);
-    setIsOpen(false); // Tutup dropdown setelah memilih
+    setIsOpen(false);
   };
-
-  // Opsional: Tutup dropdown jika klik di luar (memerlukan useEffect tambahan dan useRef)
-  // Untuk contoh ini, kita fokus pada toggle sederhana.
 
   return (
     <div className={styles.customDropdown}>
-      {/* Header Dropdown yang dapat diklik */}
       <div className={styles.dropdownHeader} onClick={handleToggle}>
         <span>{selectedCategory}</span>
-        {/* Panah yang berputar saat dibuka */}
-        <span className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ''}`}>▼</span>
+        <span className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ""}`}>
+          ▼
+        </span>
       </div>
-      
-      {/* Kontainer untuk animasi overflow */}
       <div className={styles.dropdownListContainer}>
-        {/* Daftar item dengan kelas 'open' untuk animasi */}
-        <ul className={`${styles.dropdownList} ${isOpen ? styles.open : ''}`}>
+        <ul className={`${styles.dropdownList} ${isOpen ? styles.open : ""}`}>
           {categories.map((category) => (
             <li
               key={category}
-              className={`${styles.dropdownItem} ${selectedCategory === category ? styles.dropdownItemSelected : ''}`}
+              className={`${styles.dropdownItem} ${
+                selectedCategory === category ? styles.dropdownItemSelected : ""
+              }`}
               onClick={() => handleSelect(category)}
             >
               {category}
@@ -49,31 +47,6 @@ const CustomCategoryDropdown = ({ categories, selectedCategory, onSelectCategory
     </div>
   );
 };
-// --- Akhir Komponen CustomCategoryDropdown ---
-
-// --- Komponen LoadingSpinner (menggunakan GIF) ---
-const LoadingSpinner = ({ className }) => (
-  // Kontainer penuh layar untuk memastikan penempatan absolut bekerja dengan benar
-  <div style={{ 
-    position: 'fixed', // Menggunakan fixed untuk menutupi seluruh viewport
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Latar belakang semi-transparan opsional
-    zIndex: 9999 // Z-index tinggi untuk berada di atas konten lain
-  }}>
-    <img
-      src="/icons/data.gif" // Menggunakan path GIF yang diminta
-      alt="Loading..."
-      className={styles.loadingGif} // Menggunakan className dari CSS untuk ukuran
-    />
-  </div>
-);
-// --- Akhir Komponen LoadingSpinner ---
 
 export default function NewsPage() {
   const router = useRouter();
@@ -85,100 +58,108 @@ export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const newsPerPage = 6;
 
-  // Dummy data berita dengan kategori
   const dummyNews = [
     {
       id: 1,
       title: "Revolutionary AI Technology Transforms Healthcare Industry",
-      excerpt: "New artificial intelligence breakthrough promises to revolutionize patient care and medical diagnosis accuracy with unprecedented precision.",
+      excerpt:
+        "New artificial intelligence breakthrough promises to revolutionize patient care and medical diagnosis accuracy with unprecedented precision.",
       image: "/image/visi-&-misi.jpg",
       category: "Technology",
       date: "March 15, 2024",
-      readTime: "5 min read"
+      readTime: "5 min read",
     },
     {
       id: 2,
       title: "Sustainable Energy Solutions Gain Global Momentum",
-      excerpt: "Countries worldwide adopt innovative renewable energy projects to combat climate change effectively while boosting economic growth.",
+      excerpt:
+        "Countries worldwide adopt innovative renewable energy projects to combat climate change effectively while boosting economic growth.",
       image: "/image/news2.jpg",
       category: "Environment",
       date: "March 12, 2024",
-      readTime: "7 min read"
+      readTime: "7 min read",
     },
     {
       id: 3,
       title: "Future of Remote Work: Trends and Predictions 2024",
-      excerpt: "Experts analyze the evolving landscape of remote work and its lasting impact on global business operations and company culture.",
+      excerpt:
+        "Experts analyze the evolving landscape of remote work and its lasting impact on global business operations and company culture.",
       image: "/image/news3.jpg",
       category: "Business",
       date: "March 10, 2024",
-      readTime: "4 min read"
+      readTime: "4 min read",
     },
     {
       id: 4,
       title: "Breakthrough in Quantum Computing Achieved",
-      excerpt: "Scientists successfully demonstrate quantum supremacy with new processor architecture that solves complex problems in minutes.",
+      excerpt:
+        "Scientists successfully demonstrate quantum supremacy with new processor architecture that solves complex problems in minutes.",
       image: "/image/news4.jpg",
       category: "Technology",
       date: "March 8, 2024",
-      readTime: "6 min read"
+      readTime: "6 min read",
     },
     {
       id: 5,
       title: "Global Markets Respond to Economic Policy Changes",
-      excerpt: "Financial experts discuss implications of new monetary policies on international trade and investment opportunities.",
+      excerpt:
+        "Financial experts discuss implications of new monetary policies on international trade and investment opportunities.",
       image: "/image/news5.jpg",
       category: "Business",
       date: "March 5, 2024",
-      readTime: "5 min read"
+      readTime: "5 min read",
     },
     {
       id: 6,
       title: "Innovative Education Platforms Transform Learning",
-      excerpt: "Digital learning solutions revolutionize classroom experiences with personalized AI-driven educational content delivery.",
+      excerpt:
+        "Digital learning solutions revolutionize classroom experiences with personalized AI-driven educational content delivery.",
       image: "/image/news6.jpg",
       category: "Education",
       date: "March 3, 2024",
-      readTime: "4 min read"
+      readTime: "4 min read",
     },
     {
       id: 7,
       title: "Global Climate Summit Reaches Historic Agreement",
-      excerpt: "World leaders unite on ambitious new climate targets with binding commitments for carbon neutrality by 2050.",
+      excerpt:
+        "World leaders unite on ambitious new climate targets with binding commitments for carbon neutrality by 2050.",
       image: "/image/news7.jpg",
       category: "Environment",
       date: "February 28, 2024",
-      readTime: "8 min read"
+      readTime: "8 min read",
     },
     {
       id: 8,
       title: "Revolution in Biotechnology: Gene Therapy Breakthrough",
-      excerpt: "Scientists achieve major milestone in treating genetic disorders with new gene editing techniques showing 95% success rate.",
+      excerpt:
+        "Scientists achieve major milestone in treating genetic disorders with new gene editing techniques showing 95% success rate.",
       image: "/image/news8.jpg",
       category: "Technology",
       date: "February 25, 2024",
-      readTime: "6 min read"
+      readTime: "6 min read",
     },
   ];
 
-  // Daftar kategori unik
-  const categories = ["All", ...new Set(dummyNews.map(news => news.category))];
+  const categories = [
+    "All",
+    ...new Set(dummyNews.map((news) => news.category)),
+  ];
 
-  // Filter berita berdasarkan kategori dan pencarian
-  const filteredNews = dummyNews.filter(news => {
-    const matchesCategory = selectedCategory === "All" || news.category === selectedCategory;
-    const matchesSearch = news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         news.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredNews = dummyNews.filter((news) => {
+    const matchesCategory =
+      selectedCategory === "All" || news.category === selectedCategory;
+    const matchesSearch =
+      news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      news.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  // Hitung halaman
   const totalPages = Math.ceil(filteredNews.length / newsPerPage);
   const indexOfLastNews = currentPage * newsPerPage;
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
   const currentNews = filteredNews.slice(indexOfFirstNews, indexOfLastNews);
 
-  // Tambahkan flag imageLoaded dan imageError
   useEffect(() => {
     const timer = setTimeout(() => {
       const newsWithFlags = dummyNews.map((news) => ({
@@ -188,11 +169,11 @@ export default function NewsPage() {
       }));
       setNewsList(newsWithFlags);
       setLoading(false);
-    }, 1500); // Simulasi loading selama 1.5 detik
+    }, 1500);
+
     return () => clearTimeout(timer);
   }, []);
 
-  // Navigasi halaman
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -205,25 +186,26 @@ export default function NewsPage() {
     }
   };
 
-  // Handler untuk memuat gambar
   const handleImageLoad = (id) => {
-    setNewsList(prev => prev.map(news =>
-      news.id === id ? {...news, imageLoaded: true} : news
-    ));
+    setNewsList((prev) =>
+      prev.map((news) =>
+        news.id === id ? { ...news, imageLoaded: true } : news
+      )
+    );
   };
 
   const handleImageError = (id) => {
-    setNewsList(prev => prev.map(news =>
-      news.id === id ? {...news, imageError: true} : news
-    ));
+    setNewsList((prev) =>
+      prev.map((news) =>
+        news.id === id ? { ...news, imageError: true } : news
+      )
+    );
   };
 
-  // Tampilkan komponen LoadingSpinner jika masih loading halaman utama
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  // Tampilkan error jika ada
   if (error) {
     return (
       <section className={styles.errorSection}>
@@ -246,15 +228,14 @@ export default function NewsPage() {
         <section className={styles.newsSection}>
           <div className={styles.container}>
             <div className={styles.header}>
-              {/* Judul yang Ditingkatkan */}
               <h1 className={styles.modernTitle}>
-                <span className={styles.titleHighlight}>Latest</span> News & Insights
+                <span className={styles.titleHighlight}>Latest</span> News &
+                Insights
               </h1>
               <p className={styles.subtitle}>
                 Stay updated with our latest stories and industry insights
               </p>
             </div>
-            {/* Search Bar */}
             <div className={styles.searchContainer}>
               <input
                 type="text"
@@ -267,9 +248,6 @@ export default function NewsPage() {
                 className={styles.searchInput}
               />
             </div>
-
-            {/* Dropdown Kategori Kustom untuk Layar Kecil/Portrait */}
-            {/* Hanya ditampilkan berdasarkan media query CSS */}
             <div className={styles.categoryDropdown}>
               <CustomCategoryDropdown
                 categories={categories}
@@ -280,11 +258,7 @@ export default function NewsPage() {
                 }}
               />
             </div>
-
-            {/* Layout Kategori dan Konten */}
             <div className={styles.contentLayout}>
-              {/* Sidebar Kategori untuk Layar Besar/Landscape */}
-              {/* Hanya ditampilkan berdasarkan media query CSS */}
               <div className={styles.sidebar}>
                 <h3 className={styles.sidebarTitle}>Categories</h3>
                 <div className={styles.categoryList}>
@@ -296,7 +270,9 @@ export default function NewsPage() {
                         setCurrentPage(1);
                       }}
                       className={`${styles.categoryButton} ${
-                        selectedCategory === category ? styles.activeCategory : ''
+                        selectedCategory === category
+                          ? styles.activeCategory
+                          : ""
                       }`}
                     >
                       {category}
@@ -304,12 +280,10 @@ export default function NewsPage() {
                   ))}
                 </div>
               </div>
-              {/* Konten Berita */}
               <div className={styles.newsContent}>
-                {/* Grid Berita */}
                 <div className={styles.newsGrid}>
                   {currentNews.map((news) => {
-                    const slug = news.title.toLowerCase().replace(/\s+/g, '-');
+                    const slug = news.title.toLowerCase().replace(/\s+/g, "-");
                     return (
                       <article
                         key={news.id}
@@ -317,21 +291,18 @@ export default function NewsPage() {
                         onClick={() => router.push(`/news/${slug}`)}
                       >
                         <div className={styles.imageContainer}>
-                          {/* Gunakan GIF Loading yang dipusatkan dan diperbesar oleh CSS (.loaderImage) */}
                           {!news.imageLoaded && !news.imageError && (
                             <img
-                              src="/icons/data.gif" // Menggunakan path GIF yang diminta
+                              src="/icons/data.gif"
                               alt="Loading..."
-                              className={styles.loaderImage} // Gaya CSS ini sudah diatur untuk memusatkan dan memperbesar
+                              className={styles.loaderImage}
                             />
                           )}
-                          {/* Pesan Error */}
                           {!news.imageLoaded && news.imageError && (
                             <div className={styles.errorMessageImage}>
                               Image not available
                             </div>
                           )}
-                          {/* Gambar Berita */}
                           {news.image && !news.imageError && (
                             <img
                               src={news.image}
@@ -339,21 +310,25 @@ export default function NewsPage() {
                               onLoad={() => handleImageLoad(news.id)}
                               onError={() => handleImageError(news.id)}
                               className={`${styles.newsImage} ${
-                                news.imageLoaded ? styles.imageLoaded : ''
+                                news.imageLoaded ? styles.imageLoaded : ""
                               }`}
                             />
                           )}
                         </div>
                         <div className={styles.cardContent}>
-                          {/* Kategori */}
-                          <span className={`${styles.categoryBadge} ${styles[news.category.toLowerCase()] || ''}`}>
+                          <span
+                            className={`${styles.categoryBadge} ${
+                              styles[news.category.toLowerCase()] || ""
+                            }`}
+                          >
                             {news.category}
                           </span>
                           <h3 className={styles.newsTitle}>{news.title}</h3>
-                          {/* Meta Info */}
                           <div className={styles.metaInfo}>
                             <span className={styles.date}>{news.date}</span>
-                            <span className={styles.readTime}>{news.readTime}</span>
+                            <span className={styles.readTime}>
+                              {news.readTime}
+                            </span>
                           </div>
                           <p className={styles.excerpt}>{news.excerpt}</p>
                           <button className={styles.readMoreButton}>
@@ -364,33 +339,29 @@ export default function NewsPage() {
                     );
                   })}
                 </div>
-                {/* Pagination */}
                 {totalPages > 1 && (
                   <div className={styles.paginationContainer}>
                     <button
                       onClick={goToPrevPage}
                       disabled={currentPage === 1}
                       className={`${styles.paginationButton} ${
-                        currentPage === 1 ? styles.disabledButton : ''
+                        currentPage === 1 ? styles.disabledButton : ""
                       }`}
                     >
                       ← Previous
                     </button>
-                    {/* Keterangan jumlah berita */}
                     <div className={styles.paginationInfo}>
                       <span>
                         Page {currentPage} of {totalPages}
                       </span>
                       <span>•</span>
-                      <span>
-                        {filteredNews.length} articles found
-                      </span>
+                      <span>{filteredNews.length} articles found</span>
                     </div>
                     <button
                       onClick={goToNextPage}
                       disabled={currentPage === totalPages}
                       className={`${styles.paginationButton} ${
-                        currentPage === totalPages ? styles.disabledButton : ''
+                        currentPage === totalPages ? styles.disabledButton : ""
                       }`}
                     >
                       Next →
