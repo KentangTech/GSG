@@ -7,11 +7,9 @@ export default function Navigation() {
   const [showNavbar, setShowNavbar] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Toggle mobile menu
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Handle scroll to show navbar
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || window.pageYOffset;
@@ -27,12 +25,10 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu on route change or click
   const handleNavClick = () => {
     closeMenu();
   };
 
-  // Menu items
   const menuItems = [
     { label: "Home", href: "/", action: () => window.scrollTo({ top: 0, behavior: "smooth" }) },
     { label: "About Us", href: "#about" },

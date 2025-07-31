@@ -5,11 +5,13 @@
   --default-color: #333;
   --default-font: "Poppins", sans-serif;
   --heading-font: "Poppins", sans-serif;
+  --primary-blue: #1976d2;
 }
 
 body {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
+  font-family: "Inter", "Roboto", "Helvetica", "Arial", sans-serif;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .modern-navbar {
