@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Navigation from "../components/NavigationALT";
+import Navigation from "./NavigationAbout";
 import Footer from "../components/footer";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import BusinessSection from "./BusinessSection";
@@ -216,7 +216,9 @@ export default function AboutPage() {
               style={{
                 textShadow: "0 2px 10px rgba(0,0,0,0.25)",
                 opacity: isVisible["0"] ? 1 : 0,
-                transform: isVisible["0"] ? "translateY(0)" : "translateY(-20px)",
+                transform: isVisible["0"]
+                  ? "translateY(0)"
+                  : "translateY(-20px)",
                 transition: "all 1s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
@@ -229,33 +231,51 @@ export default function AboutPage() {
                 maxWidth: "800px",
                 margin: "0 auto",
                 opacity: isVisible["1"] ? 1 : 0,
-                transform: isVisible["1"] ? "translateY(0)" : "translateY(20px)",
+                transform: isVisible["1"]
+                  ? "translateY(0)"
+                  : "translateY(20px)",
                 transition: "all 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s",
               }}
             >
-              PT Graha Sarana Gresik – Komitmen kami terhadap mutu, lingkungan, dan keamanan pangan dalam setiap layanan.
+              PT Graha Sarana Gresik – Komitmen kami terhadap mutu, lingkungan,
+              dan keamanan pangan dalam setiap layanan.
             </p>
           </div>
         </div>
 
         {/* Sections */}
-        <VisionMisionSection isVisible={isVisible} primaryBlue={primaryBlue} openModal={openModal} />
-        <ValuesSection isVisible={isVisible} primaryBlue={primaryBlue} TypingText={TypingText} />
-        <BusinessSection
-          isVisible={isVisible}
-          primaryBlue={primaryBlue}
-          openModal={openModal}
-          closeModal={closeModal}
-          modalImage={modalImage}
-          scale={scale}
-          position={position}
-          isDragging={isDragging}
-          handleWheel={handleWheel}
-          handleMouseDown={handleMouseDown}
-          handleMouseMove={handleMouseMove}
-          handleMouseUp={handleMouseUp}
-        />
-
+        <section id="visi">
+          {" "}
+          <VisionMisionSection
+            isVisible={isVisible}
+            primaryBlue={primaryBlue}
+            openModal={openModal}
+          />
+        </section>
+        <section id="nilai">
+          {" "}
+          <ValuesSection
+            isVisible={isVisible}
+            primaryBlue={primaryBlue}
+            TypingText={TypingText}
+          />
+        </section>
+        <section id="bisnis">
+          <BusinessSection
+            isVisible={isVisible}
+            primaryBlue={primaryBlue}
+            openModal={openModal}
+            closeModal={closeModal}
+            modalImage={modalImage}
+            scale={scale}
+            position={position}
+            isDragging={isDragging}
+            handleWheel={handleWheel}
+            handleMouseDown={handleMouseDown}
+            handleMouseMove={handleMouseMove}
+            handleMouseUp={handleMouseUp}
+          />
+        </section>
         <Footer />
         <ScrollToTopButton />
       </div>

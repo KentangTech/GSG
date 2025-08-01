@@ -5,6 +5,7 @@ import Navigation from "../components/NavigationALT";
 import Footer from "../components/footer";
 import styles from "@/app/css/NewsPage.module.css";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import { fetchData } from "@/lib/api";
 import "../globals.css";
 
 const CustomCategoryDropdown = ({
@@ -13,9 +14,7 @@ const CustomCategoryDropdown = ({
   onSelectCategory,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
+  const handleToggle = () => setIsOpen(!isOpen);
   const handleSelect = (category) => {
     onSelectCategory(category);
     setIsOpen(false);
@@ -58,95 +57,50 @@ export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const newsPerPage = 6;
 
-  const dummyNews = [
-    {
-      id: 1,
-      title: "Revolutionary AI Technology Transforms Healthcare Industry",
-      excerpt:
-        "New artificial intelligence breakthrough promises to revolutionize patient care and medical diagnosis accuracy with unprecedented precision.",
-      image: "/image/visi-&-misi.jpg",
-      category: "Technology",
-      date: "March 15, 2024",
-      readTime: "5 min read",
-    },
-    {
-      id: 2,
-      title: "Sustainable Energy Solutions Gain Global Momentum",
-      excerpt:
-        "Countries worldwide adopt innovative renewable energy projects to combat climate change effectively while boosting economic growth.",
-      image: "/image/news2.jpg",
-      category: "Environment",
-      date: "March 12, 2024",
-      readTime: "7 min read",
-    },
-    {
-      id: 3,
-      title: "Future of Remote Work: Trends and Predictions 2024",
-      excerpt:
-        "Experts analyze the evolving landscape of remote work and its lasting impact on global business operations and company culture.",
-      image: "/image/news3.jpg",
-      category: "Business",
-      date: "March 10, 2024",
-      readTime: "4 min read",
-    },
-    {
-      id: 4,
-      title: "Breakthrough in Quantum Computing Achieved",
-      excerpt:
-        "Scientists successfully demonstrate quantum supremacy with new processor architecture that solves complex problems in minutes.",
-      image: "/image/news4.jpg",
-      category: "Technology",
-      date: "March 8, 2024",
-      readTime: "6 min read",
-    },
-    {
-      id: 5,
-      title: "Global Markets Respond to Economic Policy Changes",
-      excerpt:
-        "Financial experts discuss implications of new monetary policies on international trade and investment opportunities.",
-      image: "/image/news5.jpg",
-      category: "Business",
-      date: "March 5, 2024",
-      readTime: "5 min read",
-    },
-    {
-      id: 6,
-      title: "Innovative Education Platforms Transform Learning",
-      excerpt:
-        "Digital learning solutions revolutionize classroom experiences with personalized AI-driven educational content delivery.",
-      image: "/image/news6.jpg",
-      category: "Education",
-      date: "March 3, 2024",
-      readTime: "4 min read",
-    },
-    {
-      id: 7,
-      title: "Global Climate Summit Reaches Historic Agreement",
-      excerpt:
-        "World leaders unite on ambitious new climate targets with binding commitments for carbon neutrality by 2050.",
-      image: "/image/news7.jpg",
-      category: "Environment",
-      date: "February 28, 2024",
-      readTime: "8 min read",
-    },
-    {
-      id: 8,
-      title: "Revolution in Biotechnology: Gene Therapy Breakthrough",
-      excerpt:
-        "Scientists achieve major milestone in treating genetic disorders with new gene editing techniques showing 95% success rate.",
-      image: "/image/news8.jpg",
-      category: "Technology",
-      date: "February 25, 2024",
-      readTime: "6 min read",
-    },
-  ];
+  // Ambil data dari API Laravel
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchData("news"); // endpoint: /api/news
+        const formatted = data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          excerpt:
+            item.excerpt ||
+            item.desc ||
+            item.content?.substring(0, 120) + "..." ||
+            "No description available.",
+          image: item.image?.startsWith("http")
+            ? item.image
+            : `${process.env.NEXT_PUBLIC_LARAVEL_API}/${item.image}`,
+          category: item.category || "Uncategorized",
+          date: new Date(item.created_at).toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          readTime: item.read_time || "5 min read",
+          imageLoaded: false,
+          imageError: false,
+        }));
+        setNewsList(formatted);
+      } catch (err) {
+        setError("Gagal memuat berita. Silakan coba lagi nanti.");
+        console.error("Fetch news error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const categories = [
-    "All",
-    ...new Set(dummyNews.map((news) => news.category)),
-  ];
+    loadNews();
+  }, []);
 
-  const filteredNews = dummyNews.filter((news) => {
+  // Ekstrak kategori unik
+  const categories = ["All", ...new Set(newsList.map((n) => n.category))];
+
+  // Filter berita berdasarkan pencarian dan kategori
+  const filteredNews = newsList.filter((news) => {
     const matchesCategory =
       selectedCategory === "All" || news.category === selectedCategory;
     const matchesSearch =
@@ -160,45 +114,23 @@ export default function NewsPage() {
   const indexOfFirstNews = indexOfLastNews - newsPerPage;
   const currentNews = filteredNews.slice(indexOfFirstNews, indexOfLastNews);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const newsWithFlags = dummyNews.map((news) => ({
-        ...news,
-        imageLoaded: false,
-        imageError: false,
-      }));
-      setNewsList(newsWithFlags);
-      setLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const goToPrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const handleImageLoad = (id) => {
     setNewsList((prev) =>
-      prev.map((news) =>
-        news.id === id ? { ...news, imageLoaded: true } : news
-      )
+      prev.map((n) => (n.id === id ? { ...n, imageLoaded: true } : n))
     );
   };
 
   const handleImageError = (id) => {
     setNewsList((prev) =>
-      prev.map((news) =>
-        news.id === id ? { ...news, imageError: true } : news
-      )
+      prev.map((n) => (n.id === id ? { ...n, imageError: true } : n))
     );
   };
 
@@ -236,6 +168,7 @@ export default function NewsPage() {
                 Stay updated with our latest stories and industry insights
               </p>
             </div>
+
             <div className={styles.searchContainer}>
               <input
                 type="text"
@@ -248,6 +181,7 @@ export default function NewsPage() {
                 className={styles.searchInput}
               />
             </div>
+
             <div className={styles.categoryDropdown}>
               <CustomCategoryDropdown
                 categories={categories}
@@ -258,6 +192,7 @@ export default function NewsPage() {
                 }}
               />
             </div>
+
             <div className={styles.contentLayout}>
               <div className={styles.sidebar}>
                 <h3 className={styles.sidebarTitle}>Categories</h3>
@@ -280,65 +215,76 @@ export default function NewsPage() {
                   ))}
                 </div>
               </div>
+
               <div className={styles.newsContent}>
                 <div className={styles.newsGrid}>
-                  {currentNews.map((news) => {
-                    const slug = news.title.toLowerCase().replace(/\s+/g, "-");
-                    return (
-                      <article
-                        key={news.id}
-                        className={styles.newsCard}
-                        onClick={() => router.push(`/news/${slug}`)}
-                      >
-                        <div className={styles.imageContainer}>
-                          {!news.imageLoaded && !news.imageError && (
-                            <img
-                              src="/icons/data.gif"
-                              alt="Loading..."
-                              className={styles.loaderImage}
-                            />
-                          )}
-                          {!news.imageLoaded && news.imageError && (
-                            <div className={styles.errorMessageImage}>
-                              Image not available
-                            </div>
-                          )}
-                          {news.image && !news.imageError && (
-                            <img
-                              src={news.image}
-                              alt={news.title}
-                              onLoad={() => handleImageLoad(news.id)}
-                              onError={() => handleImageError(news.id)}
-                              className={`${styles.newsImage} ${
-                                news.imageLoaded ? styles.imageLoaded : ""
-                              }`}
-                            />
-                          )}
-                        </div>
-                        <div className={styles.cardContent}>
-                          <span
-                            className={`${styles.categoryBadge} ${
-                              styles[news.category.toLowerCase()] || ""
-                            }`}
-                          >
-                            {news.category}
-                          </span>
-                          <h3 className={styles.newsTitle}>{news.title}</h3>
-                          <div className={styles.metaInfo}>
-                            <span className={styles.date}>{news.date}</span>
-                            <span className={styles.readTime}>
-                              {news.readTime}
-                            </span>
+                  {currentNews.length === 0 ? (
+                    <p className={styles.noResults}>
+                      Tidak ada berita yang ditemukan.
+                    </p>
+                  ) : (
+                    currentNews.map((news) => {
+                      const slug = news.title
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")
+                        .replace(/[^\w\-]/g, "");
+                      return (
+                        <article
+                          key={news.id}
+                          className={styles.newsCard}
+                          onClick={() => router.push(`/news/${slug}`)}
+                        >
+                          <div className={styles.imageContainer}>
+                            {!news.imageLoaded && !news.imageError && (
+                              <img
+                                src="/icons/data.gif"
+                                alt="Loading..."
+                                className={styles.loaderImage}
+                              />
+                            )}
+                            {!news.imageLoaded && news.imageError && (
+                              <div className={styles.errorMessageImage}>
+                                Image not available
+                              </div>
+                            )}
+                            {news.image && !news.imageError && (
+                              <img
+                                src={news.image}
+                                alt={news.title}
+                                onLoad={() => handleImageLoad(news.id)}
+                                onError={() => handleImageError(news.id)}
+                                className={`${styles.newsImage} ${
+                                  news.imageLoaded ? styles.imageLoaded : ""
+                                }`}
+                              />
+                            )}
                           </div>
-                          <p className={styles.excerpt}>{news.excerpt}</p>
-                          <button className={styles.readMoreButton}>
-                            Read More →
-                          </button>
-                        </div>
-                      </article>
-                    );
-                  })}
+                          <div className={styles.cardContent}>
+                            <span
+                              className={`${styles.categoryBadge} ${
+                                styles[news.category.toLowerCase()] || ""
+                              }`}
+                            >
+                              {news.category}
+                            </span>
+                            <h3 className={styles.newsTitle}>{news.title}</h3>
+                            <div className={styles.metaInfo}>
+                              <span className={styles.date}>{news.date}</span>
+                              <span className={styles.readTime}>
+                                {news.readTime}
+                              </span>
+                            </div>
+                            <p className={styles.excerpt}>{news.excerpt}</p>
+                            <button className={styles.readMoreButton}>
+                              Read More →
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })
+                  )}
                 </div>
+
                 {totalPages > 1 && (
                   <div className={styles.paginationContainer}>
                     <button

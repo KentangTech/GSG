@@ -1,64 +1,28 @@
 "use client";
+
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import style from "@/app/css/AboutPage.module.css";
+import { fetchData } from "@/lib/api"; // ← Import fungsi API
 
-const bisnisData = [
-  {
-    title: "Perdagangan Umum",
-    desc: "Menjalankan usaha di bidang perdagangan maupun impor antara lain : Spare part, Bahan baku Industri atau Chemical dan Pupuk, Mekanikal Rotaring dan Non Rotaring, Instrumen & Pipa Fitting.",
-    image: "/bisnis/Perdagangan-Barang.jpg",
-    tag: "DIV.PUBP",
-  },
-  {
-    title: "Mustikarasa Cafe dan Resto",
-    desc: "Menjalankan usaha dalam bidang Cafe & Resto yang dikelola secara profesional yang berarsitektur tradisional Jawa dengan sentuhan-sentuhan modern.",
-    image: "/bisnis/Cafe-Dan-Resto.jpg",
-    tag: "DIV.PERDAGANGAN JASA",
-  },
-  {
-    title: "Perumahan Bella Casa",
-    desc: "Menjalankan usaha di bidang perumahan yang mengedepankan lingkungan asri dan nyaman bagi penghuni.",
-    image: "/bisnis/Perumahan-Bella-Casa.jpg",
-    tag: "DIV.PROPERTY & PERUMAHAN",
-  },
-  {
-    title: "Pergudangan",
-    desc: "Menjalankan usaha di bidang jasa pergudangan yang aman, strategis, dan dilengkapi sistem keamanan terpadu.",
-    image: "/bisnis/Pergudangan.jpg",
-    tag: "DIV.PROPERTY & PERUMAHAN",
-  },
-  {
-    title: "Property Perkantoran",
-    desc: "Menjalankna usaha di bidang jasa sewa ruang dan manajemen pengelolaan gedung serta pembangunan infrastruktur perkantoran.",
-    image: "/bisnis/Property-Perkantoran.jpg",
-    tag: "DIV.PROPERTY & PERUMAHAN",
-  },
-  {
-    title: "Jasa sewa alat berat & Kendaraan",
-    desc: "Menjalankan usaha di bidang persewaan angkutan kendaraan seperti bis, mobil hingga alat berat.",
-    image: "/bisnis/Jasa-Sewa-Kendaraan.jpg",
-    tag: "DIV.PERDAGANGAN JASA",
-  },
-  {
-    title: "Jasa Konstruksi",
-    desc: "Menjalankan usaha di bidang konstruksi bangunan dan infrastruktur dengan tenaga ahli dan peralatan modern.",
-    image: "/bisnis/Jasa-Konstruksi.jpg",
-    tag: "DIV.PERDAGANGAN JASA",
-  },
-  {
-    title: "Tour & Travel",
-    desc: "Menyediakan layanan tour wisata dan travel umroh/haji dengan pelayanan prima dan harga kompetitif.",
-    image: "/bisnis/Tour-Dan-Travel.jpg",
-    tag: "GRESIK GRAHA WISATA",
-  },
-];
+function truncateDescHalf(text, percentage = 0.5) {
+  const cleanText = text.replace(/<[^>]*>/g, '').trim();
+  const length = cleanText.length;
+  if (length <= 100) return cleanText;
+  const targetLength = Math.floor(length * percentage);
+  let cutIndex = targetLength;
+  const nextPeriod = cleanText.indexOf('. ', cutIndex);
+  if (nextPeriod !== -1) {
+    cutIndex = nextPeriod + 1;
+  } else {
+    const nextSpace = cleanText.lastIndexOf(' ', targetLength);
+    cutIndex = nextSpace !== -1 ? nextSpace : targetLength;
+  }
+  return cutIndex < length ? cleanText.slice(0, cutIndex).trim() + '...' : cleanText;
+}
 
 function generateSlug(title) {
-  return title
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "");
+  return title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
 }
 
 export default function BusinessSection({
@@ -73,6 +37,7 @@ export default function BusinessSection({
   handleMouseMove,
   handleMouseUp,
 }) {
+  const [bisnisData, setBisnisData] = useState([]);
   const [isVisible, setIsVisible] = useState({});
   const isResetting = useRef(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -85,19 +50,37 @@ export default function BusinessSection({
   const sliderRef = useRef(null);
   const cardRefs = useRef([]);
 
+  // Ambil data dari API Laravel
+  useEffect(() => {
+    const loadBisnis = async () => {
+      try {
+        const data = await fetchData("bisnis"); // endpoint: /api/bisnis
+        setBisnisData(data);
+      } catch (error) {
+        console.error("Gagal ambil data bisnis:", error);
+        setBisnisData([]); // fallback kosong
+      }
+    };
+
+    loadBisnis();
+  }, []);
+
   // Auto-slide
   useEffect(() => {
+    if (bisnisData.length === 0) return;
+
     const interval = setInterval(() => {
       if (!isResetting.current) {
         goToNext();
       }
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [bisnisData.length]);
 
   // Reset loop halus
   useEffect(() => {
-    if (!sliderRef.current) return;
+    if (!sliderRef.current || bisnisData.length === 0) return;
+
     const itemWidth = window.innerWidth >= 992 ? 100 / visibleItemsDesktop : 100 / visibleItemsMobile;
     const totalGap = gap * (window.innerWidth >= 992 ? visibleItemsDesktop : visibleItemsMobile);
     const resetThreshold = totalItems * 2;
@@ -118,7 +101,7 @@ export default function BusinessSection({
     }
   }, [currentIndex, totalItems]);
 
-  // Intersection Observer untuk animasi muncul
+  // Intersection Observer (judul)
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -138,7 +121,7 @@ export default function BusinessSection({
     };
   }, []);
 
-  // --- Touch Handlers ---
+  // Touch Handlers
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
@@ -162,17 +145,12 @@ export default function BusinessSection({
     touchEndX.current = null;
   };
 
-  const goToPrev = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
+  const goToPrev = () => setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  const goToNext = () => setCurrentIndex((prev) => prev + 1);
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => prev + 1);
-  };
-
-  // --- Center Detection for Mobile Cards ---
+  // Center Detection (Mobile)
   useEffect(() => {
-    if (window.innerWidth >= 992) return; // Hanya untuk mobile
+    if (window.innerWidth >= 992 || bisnisData.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -184,18 +162,13 @@ export default function BusinessSection({
           const elementCenterX = rect.left + rect.width / 2;
           const distance = Math.abs(centerX - elementCenterX);
           const threshold = rect.width * 0.3;
-
           if (distance < threshold) {
             newCentered.add(entry.target.dataset.index);
           }
         });
         setCenteredCards(newCentered);
       },
-      {
-        root: null,
-        rootMargin: "0px",
-        threshold: 0.5,
-      }
+      { root: null, rootMargin: "0px", threshold: 0.5 }
     );
 
     cardRefs.current.forEach((card) => {
@@ -207,12 +180,24 @@ export default function BusinessSection({
         if (card) observer.unobserve(card);
       });
     };
-  }, [currentIndex]);
+  }, [currentIndex, bisnisData.length]);
+
+  if (bisnisData.length === 0) {
+    return (
+      <section className="py-10 bg-gradient-to-br from-white via-blue-50 to-indigo-50">
+        <div className={style.sectionContainer}>
+          <div className="text-center">
+            <p>Loading bisnis...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-10 bg-gradient-to-br from-white via-blue-50 to-indigo-50">
       <div className={style.sectionContainer}>
-        {/* Judul Section */}
+        {/* Judul */}
         <div
           data-idx="9"
           className={`${style.titleFadeIn} ${isVisible["9"] ? style.visible : ""} text-center mb-12`}
@@ -231,9 +216,7 @@ export default function BusinessSection({
             <div
               className="d-flex"
               ref={sliderRef}
-              style={{
-                transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
-              }}
+              style={{ transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)" }}
             >
               {extendedData.map((item, index) => (
                 <div
@@ -251,7 +234,9 @@ export default function BusinessSection({
                     <div className="card-body p-4">
                       <h6 className={`${style.cardTitle} fs-5`}>{item.title}</h6>
                       {item.tag && <span className={style.cardTag}>{item.tag}</span>}
-                      <p className={style.cardDesc}>{item.desc}</p>
+                      <p className={style.cardDesc}>
+                        {truncateDescHalf(item.desc, 0.5)}
+                      </p>
                       <Link href={`/about/${generateSlug(item.title)}`}>
                         <button
                           className={style.cardButton}
@@ -269,7 +254,6 @@ export default function BusinessSection({
 
           {/* Mobile Slider */}
           <div className="d-lg-none">
-            {/* Navigasi */}
             <div className="d-flex justify-content-end mb-3 gap-2">
               <button onClick={goToPrev} className={style.navButton} aria-label="Sebelumnya">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
@@ -283,7 +267,6 @@ export default function BusinessSection({
               </button>
             </div>
 
-            {/* Slider */}
             <div
               className={style.sliderContainer}
               style={{
@@ -321,7 +304,9 @@ export default function BusinessSection({
                     <div className="card-body p-3">
                       <h6 className={`${style.cardTitle} fs-6`}>{item.title}</h6>
                       {item.tag && <span className={style.cardTag}>{item.tag}</span>}
-                      <p className={style.cardDesc}>{item.desc}</p>
+                      <p className={style.cardDesc}>
+                        {truncateDescHalf(item.desc, 0.5)}
+                      </p>
                       <Link href={`/about/${generateSlug(item.title)}`}>
                         <button
                           className={style.cardButton}
@@ -356,16 +341,9 @@ export default function BusinessSection({
             className={style.modalImageContainer}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Tombol Close */}
-            <button
-              type="button"
-              className={style.closeButton}
-              onClick={closeModal}
-              aria-label="Tutup"
-            >
+            <button type="button" className={style.closeButton} onClick={closeModal} aria-label="Tutup">
               ×
             </button>
-
             <img
               src={modalImage}
               alt="Zoom"

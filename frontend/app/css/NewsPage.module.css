@@ -1,3 +1,9 @@
+.main {
+  padding-top: 60px;
+  min-height: 100vh;
+  width: 100%;
+}
+
 /* --- Loader GIF --- */
 .loaderImage {
   width: 250px;
@@ -26,7 +32,6 @@
 }
 /* --- Akhir Loader GIF --- */
 
-
 /* --- Judul Modern & Terpusat --- */
 .header {
   text-align: center;
@@ -54,7 +59,6 @@
   margin-bottom: 0;
 }
 /* --- Akhir Judul Modern & Terpusat --- */
-
 
 /* --- Custom Dropdown Styles --- */
 .categoryDropdown {
@@ -174,7 +178,6 @@
 }
 /* --- Akhir Custom Dropdown Styles --- */
 
-
 /* --- Sidebar Styles --- */
 .sidebar {
   min-width: 250px;
@@ -240,7 +243,6 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 /* --- Akhir Sidebar Styles --- */
-
 
 /* --- Main Layout & Content --- */
 .main {
@@ -530,7 +532,6 @@
 }
 /* --- Akhir Main Layout & Content --- */
 
-
 /* --- Responsive Design --- */
 @media (max-width: 1024px) {
   .newsGrid {
@@ -661,8 +662,8 @@
     align-items: flex-start;
     gap: 0.25rem;
   }
-  .date, .readTime {
+  .date,
+  .readTime {
     font-size: 0.8rem;
   }
 }
-/* --- Akhir Responsive Design --- */

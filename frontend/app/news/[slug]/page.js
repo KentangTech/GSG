@@ -4,62 +4,91 @@ import { useRouter } from "next/navigation";
 import Footer from "@/app/components/footer";
 import RelatedNews from "./RelatedNews";
 import Navigation from "@/app/components/NavigationALT";
-import '@/app/globals.css';
+import { fetchData } from "@/lib/api";
+import "@/app/globals.css";
 
 export default function NewsDetail({ params }) {
   const router = useRouter();
-  const { slug } = React.use(params) || {};
+  const { slug } = params;
 
-  const dummyNews = {
-    title: "Judul Berita Statis",
-    content: `
-      <p>
-        Ini adalah contoh deskripsi detail berita yang akan ditampilkan secara dinamis nanti.
-        Anda bisa menambahkan paragraf, gambar, atau elemen lain di sini.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, 
-        nunc eget tincidunt tincidunt, nisl nibh ullamcorper nulla, vitae 
-        malesuada justo sem sit amet justo.
-      </p>
-      <p>
-        Sed ut imperdiet massa. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-        Curabitur ac justo sit amet metus vehicula congue. Duis vel velit id nisi viverra bibendum.
-      </p>
-      <p>
-        Integer id orci a nulla luctus ultrices. Donec sit amet eros sed ante dapibus eleifend.
-        Nulla facilisi. Sed euismod, nisl vel bibendum viverra, justo nulla sagittis augue,
-        id lacinia lectus nisi in eros. Curabitur id nulla ac nisi ullamcorper viverra.
-      </p>
-      <p>
-        Phasellus in sapien ac nunc tincidunt placerat. Vivamus euismod, nisl vel bibendum viverra, justo nulla sagittis augue,
-        id lacinia lectus nisi in eros. Curabitur id nulla ac nisi ullamcorper viverra.
-      </p>
-      <p>
-        Maecenas at libero vel lectus dapibus, consectetur massa eget, bibendum turpis.
-        Integer sed nisi eget nunc volutpat, euismod massa sed, facilisis velit.
-      </p>
-      <p>
-        Pellentesque non lorem eu augue facilisis eleifend. Sed vitae magna sed justo malesuada bibendum.
-        Donec non nisi nec arcu blandit, ultricies arcu in, placerat nunc.
-      </p>
-    `,
-    image: "/image/news1.jpg",
-    date: "18 Juli 2025",
-    category: "Berita Terbaru",
-  };
-
-  // State untuk gambar
+  const [news, setNews] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  useEffect(() => {
+    if (!slug) return;
+
+    const loadNews = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchData(`news/${slug}`);
+
+        // Format data dari API
+        const formattedNews = {
+          title: data.title,
+          content: data.content || data.desc || data.excerpt || "<p>Belum ada konten.</p>",
+          image: data.image?.startsWith("http")
+            ? data.image
+            : `${process.env.NEXT_PUBLIC_LARAVEL_API}/${data.image}`,
+          date: new Date(data.created_at).toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          category: data.category || "Berita Terbaru",
+        };
+
+        setNews(formattedNews);
+      } catch (error) {
+        console.error("Gagal ambil data berita:", error);
+        setNews(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNews();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div style={{ padding: "100px 20px", textAlign: "center" }}>
+        <img src="/icons/data.gif" alt="Loading..." style={{ width: "60px" }} />
+        <p>Muat berita...</p>
+      </div>
+    );
+  }
+
+  if (!news) {
+    return (
+      <div style={{ padding: "100px 20px", textAlign: "center" }}>
+        <h3>Berita tidak ditemukan</h3>
+        <button
+          onClick={() => router.back()}
+          style={{
+            backgroundColor: "#0d6efd",
+            color: "white",
+            border: "none",
+            padding: "0.5rem 1rem",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginTop: "1rem",
+          }}
+        >
+          ← Kembali
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
-    <Navigation/>
+      <Navigation />
       <section
         style={{
           backgroundColor: "white",
-          padding: "60px 20px",
+          padding: "100px 20px",
           color: "#222",
           minHeight: "100vh",
           boxSizing: "border-box",
@@ -89,7 +118,7 @@ export default function NewsDetail({ params }) {
             ← Kembali
           </button>
 
-          {/* Gambar Berita dengan Loader SVG */}
+          {/* Gambar Berita */}
           <div
             style={{
               width: "100%",
@@ -102,7 +131,6 @@ export default function NewsDetail({ params }) {
               position: "relative",
             }}
           >
-            {/* Loader SVG saat gambar dimuat */}
             {!imageLoaded && !imageError && (
               <div
                 style={{
@@ -118,17 +146,12 @@ export default function NewsDetail({ params }) {
                 <img
                   src="/icons/data.gif"
                   alt="Loading"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "block",
-                  }}
+                  style={{ width: "100%", height: "100%", display: "block" }}
                 />
               </div>
             )}
 
-            {/* Pesan Error jika gambar gagal dimuat */}
-            {!imageLoaded && imageError && (
+            {imageError && (
               <div
                 style={{
                   position: "absolute",
@@ -150,15 +173,13 @@ export default function NewsDetail({ params }) {
               </div>
             )}
 
-            {/* Gambar Berita */}
             <img
-              src={dummyNews.image}
-              alt={dummyNews.title}
+              src={news.image}
+              alt={news.title}
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                borderRadius: "10px",
                 opacity: imageLoaded ? 1 : 0,
                 transition: "opacity 0.3s ease",
               }}
@@ -168,7 +189,7 @@ export default function NewsDetail({ params }) {
             />
           </div>
 
-          {/* Kategori Berita */}
+          {/* Kategori */}
           <div
             style={{
               fontSize: "0.9rem",
@@ -177,10 +198,10 @@ export default function NewsDetail({ params }) {
               marginBottom: "0.5rem",
             }}
           >
-            {dummyNews.category}
+            {news.category}
           </div>
 
-          {/* Judul Berita */}
+          {/* Judul */}
           <h1
             style={{
               fontSize: "2rem",
@@ -189,10 +210,10 @@ export default function NewsDetail({ params }) {
               color: "black",
             }}
           >
-            {dummyNews.title}
+            {news.title}
           </h1>
 
-          {/* Tanggal Berita */}
+          {/* Tanggal */}
           <p
             style={{
               fontSize: "0.9rem",
@@ -200,10 +221,10 @@ export default function NewsDetail({ params }) {
               marginBottom: "1.5rem",
             }}
           >
-            {dummyNews.date}
+            {news.date}
           </p>
 
-          {/* Konten Berita */}
+          {/* Konten */}
           <div
             style={{
               fontSize: "1rem",
@@ -211,15 +232,14 @@ export default function NewsDetail({ params }) {
               color: "#333",
               marginBottom: "4rem",
             }}
-            dangerouslySetInnerHTML={{ __html: dummyNews.content }}
+            dangerouslySetInnerHTML={{ __html: news.content }}
           />
 
           {/* Berita Terkait */}
-          <RelatedNews />
+          <RelatedNews currentSlug={slug} />
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
     </>
   );

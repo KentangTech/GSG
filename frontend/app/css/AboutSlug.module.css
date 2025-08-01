@@ -1,212 +1,149 @@
-/* Variabel Warna & Global */
-:root {
-  --primary-blue: #1976d2;
-  --primary-blue-light: #42a5f5;
-  --text-dark: #1a202c;
-  --text-gray: #4a5568;
-  --bg-light: #f7fafc;
-  --white: #ffffff;
-  --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-  --border-radius: 16px;
-  --border-radius-lg: 20px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+.mainContainer {
+  padding-top: 72px; /* Hindari tumpang tindih dengan navbar */
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1e293b;
 }
 
-/* Container Halaman */
 .pageContainer {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  background: var(--white);
-  border-radius: var(--border-radius-lg);
-  padding: 2.5rem;
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Efek Latar Belakang Halus */
-.pageContainer::before {
-  content: "";
-  position: absolute;
-  top: -40%;
-  right: -20%;
-  width: 60%;
-  height: 120%;
-  background: radial-gradient(circle, rgba(25, 118, 210, 0.06) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.pageContainer > * {
-  position: relative;
-  z-index: 1;
+  padding: 2.5rem 1.5rem;
 }
 
 /* Tombol Kembali */
 .backButtonContainer {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s ease forwards;
+  margin-bottom: 2rem;
 }
 
 .backButton {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--primary-blue);
+  color: #1e40af;
   font-weight: 600;
-  font-size: 0.95rem;
   text-decoration: none;
-  padding: 0.5em 1em;
-  border-radius: 12px;
-  transition: var(--transition);
-  background-color: rgba(25, 118, 210, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: rgba(30, 64, 175, 0.08);
+  transition: all 0.3s ease;
 }
 
 .backButton:hover {
-  color: var(--primary-blue);
-  background-color: rgba(25, 118, 210, 0.15);
+  background-color: rgba(30, 64, 175, 0.15);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
 }
 
 .arrowIcon {
   transition: transform 0.3s ease;
-  width: 18px;
-  height: 18px;
 }
 
 .backButton:hover .arrowIcon {
   transform: translateX(-4px);
 }
 
-/* Wrapper Gambar */
-.imageWrapper {
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: var(--transition);
-  height: 420px;
-  background-color: #f8f9fa;
-  position: relative;
+/* Detail Wrapper - Gambar & Teks */
+.detailWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  animation: fadeInUp 0.8s ease-out;
 }
 
-.imageWrapper::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 70%, rgba(0, 0, 0, 0.1) 100%);
-  opacity: 0.7;
-  border-radius: var(--border-radius);
-  pointer-events: none;
+/* Gambar */
+.imageWrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
 .imageWrapper:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .imageWrapper img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  display: block;
   object-fit: cover;
-  transition: transform 0.7s ease;
 }
 
-.imageWrapper:hover img {
-  transform: scale(1.08);
-}
-
-/* Konten Teks */
-.contentWrapper {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeInUp 0.8s ease 0.3s forwards;
+/* Teks */
+.textWrapper {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 /* Tag */
 .tag {
   display: inline-block;
-  background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+  background-color: #1e40af;
   color: white;
-  padding: 0.5em 1.3em;
   font-size: 0.85rem;
   font-weight: 600;
+  padding: 0.4rem 0.8rem;
   border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  margin-bottom: 1rem;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
 }
 
 /* Judul */
 .title {
   font-size: 2.6rem;
-  font-weight: 800;
-  color: var(--text-dark);
-  margin: 1.2rem 0 1.5rem;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin-bottom: 1.2rem;
   line-height: 1.2;
   letter-spacing: -0.5px;
 }
 
 /* Deskripsi */
 .description {
-  font-size: 1.125rem;
-  color: var(--text-gray);
+  font-size: 1.1rem;
   line-height: 1.8;
+  color: #334155;
   margin-bottom: 2rem;
-  text-align: justify;
+  text-align: center;
 }
 
-/* Tombol CTA */
+/* CTA Button */
 .ctaButtonContainer {
-  text-align: center;
-  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 .ctaButton {
-  background: linear-gradient(90deg, var(--primary-blue), #1565c0);
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
   color: white;
   border: none;
-  padding: 1em 2.6em;
-  font-size: 1.05rem;
+  padding: 0.9rem 2.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.35);
-  transition: var(--transition);
+  border-radius: 12px;
   cursor: pointer;
-  min-width: 300px;
-  letter-spacing: 0.3px;
-  position: relative;
-  overflow: hidden;
-}
-
-.ctaButton::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.ctaButton:hover::before {
-  opacity: 1;
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
 }
 
 .ctaButton:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(25, 118, 210, 0.45);
-  background: linear-gradient(90deg, #1565c0, #0d47a1);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d3567 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.5);
 }
 
-.ctaButton:active {
-  transform: translateY(-1px);
+/* Footer */
+.footer {
+  margin-top: 4rem;
 }
 
 /* Animasi */
@@ -221,54 +158,35 @@
   }
 }
 
-/* Responsif */
-@media (max-width: 991.98px) {
-  .pageContainer {
-    padding: 1.8rem;
-    margin: 1rem;
+/* Responsive: Tablet & Mobile */
+@media (min-width: 768px) {
+  .detailWrapper {
+    flex-direction: row;
+    align-items: center;
+    gap: 4rem;
   }
 
-  .title {
-    font-size: 2.1rem;
-    text-align: center;
+  .textWrapper {
+    text-align: left;
+    margin: 0;
   }
 
   .description {
-    font-size: 1.05rem;
     text-align: left;
-  }
-
-  .imageWrapper {
-    height: 320px;
-  }
-
-  .backButton {
-    font-size: 0.9rem;
-    padding: 0.4em 0.8em;
-  }
-
-  .ctaButton {
-    min-width: auto;
-    width: 100%;
-    padding: 0.9em 2em;
-    font-size: 1rem;
   }
 }
 
-@media (max-width: 576px) {
-  .pageContainer {
-    padding: 1.2rem;
-  }
-
+@media (max-width: 480px) {
   .title {
-    font-size: 1.9rem;
-  }
-
-  .imageWrapper {
-    height: 260px;
+    font-size: 2.2rem;
   }
 
   .description {
     font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .pageContainer {
+    padding: 2rem 1rem;
   }
 }
