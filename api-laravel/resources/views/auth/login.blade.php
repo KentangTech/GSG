@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login | PT Graha Sarana Gresik</title>
+    <title>Login | PT GSG</title>
     <link rel="icon" href="{{ asset('GSG-Logo-Aja.png') }}" type="image/png">
 
     <!-- Tailwind CSS via CDN -->

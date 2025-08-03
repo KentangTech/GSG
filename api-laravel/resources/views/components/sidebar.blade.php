@@ -1,28 +1,38 @@
-<aside class="sidebar col-md-3 col-lg-2 px-0">
-    <div class="logo text-white fw-bold">
-        <i class="fas fa-rocket me-2"></i> AdminPanel
+<aside class="sidebar">
+    <!-- Tombol Tutup -->
+    <button class="btn-close-sidebar" type="button" onclick="toggleSidebar()">
+        <i class="fas fa-times" style="font-size: 0.9rem;"></i>
+    </button>
+
+    <!-- Logo -->
+    <div class="logo">
+        <i class="fas fa-rocket"></i> <span>GSG Panel</span>
     </div>
 
+    <!-- Menu Navigasi -->
     <nav class="mt-4">
-        <a href="#" class="active">
+        <a href="{{ route('dashboard') }}" class="active">
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
-        {{-- <a href="#">
-            <i class="fas fa-users"></i>
-            <span>Users</span>
+        <a href="{{ route('direksi.index') }}">
+            <i class="fas fa-user-tie"></i>
+            <span>Direksi</span>
         </a>
-        <a href="#">
-            <i class="fas fa-box"></i>
-            <span>Products</span>
+        {{-- <a href="{{ route('bisnis.index') }}"> --}}
+            <i class="fas fa-briefcase"></i>
+            <span>Bisnis</span>
         </a>
-        <a href="#">
-            <i class="fas fa-chart-line"></i>
-            <span>Reports</span>
+        {{-- <a href="{{ route('news.index') }}"> --}}
+            <i class="fas fa-newspaper"></i>
+            <span>News</span>
         </a>
-        <a href="#">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </a> --}}
+        {{-- <a href="{{ route('sosmed.index') }}"> --}}
+            <i class="fas fa-hashtag"></i>
+            <span>Sosial Media</span>
+        </a>
     </nav>
 </aside>
+
+<!-- Backdrop -->
+<div class="sidebar-backdrop" style="display: none;" onclick="toggleSidebar()"></div>

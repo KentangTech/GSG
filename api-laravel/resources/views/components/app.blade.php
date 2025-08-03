@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="id" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>@yield('title', 'Admin Dashboard')</title>
+    <title>@yield('title', 'Admin Dashboard') | PT GSG</title>
 
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -17,68 +18,27 @@
 
     <!-- Custom Admin CSS -->
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
-    <link rel="icon" href="{{ asset('GSG-Logo-Aja.png') }}" type="image/png">
-</head>
-<body>
-    <!-- Toggle Button (Mobile) -->
-    <button class="btn toggle-sidebar d-md-none" type="button" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
 
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('GSG-Logo-Aja.png') }}" type="image/png" />
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Livewire Styles -->
+    @livewireStyles
+</head>
+
+<body>
     <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <i class="fas fa-rocket"></i> <span>AdminPanel</span>
-        </div>
-        <nav class="mt-4">
-            <a href="#" class="active">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
-            </a>
-            <a href="#">
-                <i class="fas fa-box"></i>
-                <span>Products</span>
-            </a>
-            <a href="#">
-                <i class="fas fa-chart-line"></i>
-                <span>Reports</span>
-            </a>
-            <a href="#">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
-        </nav>
-    </aside>
+    @include('components.sidebar')
+
+    <!-- Backdrop untuk menutup sidebar di mobile -->
+    <div class="sidebar-backdrop" style="display: none;" onclick="toggleSidebar()"></div>
 
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
-        <header class="top-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 text-dark fw-semibold">@yield('page-title')</h5>
-            <div class="d-flex align-items-center gap-3">
-                <!-- Dark Mode Toggle -->
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-
-                <!-- Notification -->
-                <button class="btn btn-light btn-sm rounded-circle position-relative">
-                    <i class="far fa-bell text-muted"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill">3</span>
-                </button>
-
-                <!-- Profile -->
-                <div class="d-flex align-items-center gap-2">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=4361ee&color=fff&size=128"
-                         alt="Profile" class="profile-img rounded-circle">
-                    <span class="d-none d-md-block fw-medium">Admin</span>
-                </div>
-            </div>
-        </header>
+        @include('components.header')
 
         <!-- Page Content -->
         <main>
@@ -88,35 +48,54 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Dark Mode & Sidebar Toggle Script -->
+    <!-- Custom JavaScript -->
     <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.querySelector('.sidebar-backdrop');
 
-        if (localStorage.getItem('theme') === 'dark') {
-            html.setAttribute('data-bs-theme', 'dark');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        } else {
-            html.setAttribute('data-bs-theme', 'light');
-            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            sidebar.classList.toggle('show');
+
+            // Hanya tampilkan backdrop di mobile
+            if (window.innerWidth < 992) {
+                backdrop.style.display = sidebar.classList.contains('show') ? 'block' : 'none';
+            } else {
+                backdrop.style.display = 'none';
+            }
         }
 
-        themeToggle.addEventListener('click', () => {
-            if (html.getAttribute('data-bs-theme') === 'dark') {
-                html.setAttribute('data-bs-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        // Tutup sidebar saat resize ke desktop
+        window.addEventListener('resize', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.querySelector('.sidebar-backdrop');
+
+            if (window.innerWidth >= 992) {
+                sidebar.classList.remove('show');
+                backdrop.style.display = 'none';
             } else {
-                html.setAttribute('data-bs-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                // Biarkan sidebar tetap sesuai toggle
             }
         });
 
-        function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        }
+        // Optional: Auto-close sidebar saat klik menu (di mobile)
+        document.querySelectorAll('.sidebar nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    setTimeout(() => {
+                        document.querySelector('.sidebar').classList.remove('show');
+                        document.querySelector('.sidebar-backdrop').style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
     </script>
+
+    <!-- Livewire Scripts -->
+    @livewireScripts
+
 </body>
+
 </html>
