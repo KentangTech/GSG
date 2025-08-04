@@ -25,5 +25,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('api')->middleware('auth')->group(function () {
-    Route::apiResource('direksi', DireksiController::class);
+    Route::post('direksi', [DireksiController::class , 'json']);
 });

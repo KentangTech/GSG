@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DireksiController extends Controller
 {
-    public function index(Request $request)
+    public function json(Request $request)
     {
         try {
             $direksi = Direksi::all();

@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Direksi;
 use Livewire\WithFileUploads;
+use App\Models\Direksi;
 use Illuminate\Support\Facades\Storage;
 
 class DireksiManager extends Component
@@ -14,6 +14,7 @@ class DireksiManager extends Component
     public $nama;
     public $posisi;
     public $gambar;
+
     public $edit_id;
     public $edit_nama;
     public $edit_posisi;
@@ -22,13 +23,13 @@ class DireksiManager extends Component
     protected $rules = [
         'nama' => 'required|string|max:255',
         'posisi' => 'required|in:Direktur Utama,Direktur Operasional,Direktur Keuangan',
-        'gambar' => 'nullable|image|max:2048',
+        'gambar' => 'nullable|mimes:png,jpg,jpeg,svg|max:2048',
     ];
 
     protected $editRules = [
         'edit_nama' => 'required|string|max:255',
         'edit_posisi' => 'required|in:Direktur Utama,Direktur Operasional,Direktur Keuangan',
-        'edit_gambar' => 'nullable|image|max:2048',
+        'edit_gambar' => 'nullable|mimes:png,jpg,jpeg,svg|max:2048',
     ];
 
     public function render()
@@ -39,39 +40,10 @@ class DireksiManager extends Component
         return view('livewire.direksi-manager', compact('direksi', 'limitReached'));
     }
 
-    public function store()
+    public function openCreateModal()
     {
-        $direksiCount = Direksi::count();
-        if ($direksiCount >= 3) {
-            $this->dispatch('alert', [
-                'type' => 'error',
-                'message' => 'Maksimal 3 direktur sudah tercapai.'
-            ]);
-            return;
-        }
-
-        $this->validate();
-
-        $data = ['nama' => $this->nama, 'posisi' => $this->posisi];
-
-        if ($this->gambar) {
-            $filename = time() . '_' . $this->gambar->getClientOriginalName();
-            $this->gambar->storeAs('public/direksi', $filename);
-            $data['gambar'] = $filename;
-        }
-
-        if (!Storage::exists('public/direksi/' . $filename)) {
-            session()->flash('message', 'Upload gagal: File tidak tersimpan');
-            return;
-        }
-
-        Direksi::create($data);
         $this->resetForm();
-        $this->dispatch('direksi-updated');
-        $this->dispatch('alert', [
-            'type' => 'success',
-            'message' => 'Direktur berhasil ditambahkan.'
-        ]);
+        $this->dispatch('open-create-modal');
     }
 
     public function edit($id)
@@ -81,6 +53,37 @@ class DireksiManager extends Component
         $this->edit_nama = $direksi->nama;
         $this->edit_posisi = $direksi->posisi;
         $this->edit_gambar = null;
+
+        $this->dispatch('open-edit-modal');
+    }
+
+    public function store()
+    {
+        if (Direksi::count() >= 3) {
+            session()->flash('message', 'Maksimal 3 direktur sudah tercapai.');
+            $this->dispatch('closeModal');
+            return;
+        }
+
+        $this->validate();
+
+        $data = [
+            'nama' => $this->nama,
+            'posisi' => $this->posisi,
+        ];
+
+        if ($this->gambar) {
+            $extension = $this->gambar->getClientOriginalExtension();
+            $filename = 'direksi_' . time() . '_' . uniqid() . '.' . $extension;
+            $this->gambar->storeAs('public/direksi', $filename);
+            $data['gambar'] = $filename;
+        }
+
+        Direksi::create($data);
+
+        $this->resetForm();
+        $this->dispatch('closeModal');
+        session()->flash('message', 'Direktur berhasil ditambahkan.');
     }
 
     public function update()
@@ -88,39 +91,41 @@ class DireksiManager extends Component
         $this->validate($this->editRules);
 
         $direksi = Direksi::findOrFail($this->edit_id);
-        $data = ['nama' => $this->edit_nama, 'posisi' => $this->edit_posisi];
+        $data = [
+            'nama' => $this->edit_nama,
+            'posisi' => $this->edit_posisi,
+        ];
 
         if ($this->edit_gambar) {
-            if ($direksi->gambar) {
+            if ($direksi->gambar && Storage::exists('public/direksi/' . $direksi->gambar)) {
                 Storage::delete('public/direksi/' . $direksi->gambar);
             }
-            $filename = time() . '_' . $this->edit_gambar->getClientOriginalName();
+
+            $extension = $this->edit_gambar->getClientOriginalExtension();
+            $filename = 'direksi_' . time() . '_' . uniqid() . '.' . $extension;
             $this->edit_gambar->storeAs('public/direksi', $filename);
             $data['gambar'] = $filename;
         }
 
         $direksi->update($data);
+
         $this->resetEdit();
-        $this->dispatch('direksi-updated');
-        $this->dispatch('close-modal');
-        $this->dispatch('alert', [
-            'type' => 'success',
-            'message' => 'Direktur berhasil diupdate.'
-        ]);
+        $this->dispatch('closeModal');
+        session()->flash('message', 'Direktur berhasil diperbarui.');
     }
 
     public function delete($id)
     {
         $direksi = Direksi::findOrFail($id);
-        if ($direksi->gambar) {
+
+        if ($direksi->gambar && Storage::exists('public/direksi/' . $direksi->gambar)) {
             Storage::delete('public/direksi/' . $direksi->gambar);
         }
+
         $direksi->delete();
+
+        session()->flash('message', 'Direktur berhasil dihapus.');
         $this->dispatch('direksi-updated');
-        $this->dispatch('alert', [
-            'type' => 'success',
-            'message' => 'Direktur berhasil dihapus.'
-        ]);
     }
 
     private function resetForm()
