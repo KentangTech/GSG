@@ -26,12 +26,12 @@
             <span>Bisnis</span>
         </a>
 
-        {{-- <a href="{{ route('news.index') }}" class="{{ request()->routeIs('news.*') ? 'active' : '' }}"> --}}
+        <a href="{{ route('news.index') }}" class="{{ request()->routeIs('news.*') ? 'active' : '' }}">
             <i class="fas fa-newspaper"></i>
             <span>News</span>
         </a>
 
-        {{-- <a href="{{ route('sosmed.index') }}" class="{{ request()->routeIs('sosmed.*') ? 'active' : '' }}"> --}}
+        <a href="{{ route('medsos.index') }}" class="{{ request()->routeIs('medsos.*') ? 'active' : '' }}">
             <i class="fas fa-hashtag"></i>
             <span>Sosial Media</span>
         </a>
