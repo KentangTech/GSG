@@ -29,7 +29,7 @@ export default function DireksiSection() {
   useEffect(() => {
     const loadDireksi = async () => {
       try {
-        const data = await fetchData("direksi"); // Mengambil dari API Laravel
+        const data = await fetchData("direksi");
         const dataWithFlags = data.map((d) => ({
           ...d,
           imageLoaded: false,

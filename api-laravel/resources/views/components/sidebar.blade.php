@@ -11,23 +11,27 @@
 
     <!-- Menu Navigasi -->
     <nav class="mt-4">
-        <a href="{{ route('dashboard') }}" class="active">
+        <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('direksi.index') }}">
+
+        <a href="{{ route('direksi.index') }}" class="{{ request()->routeIs('direksi.*') ? 'active' : '' }}">
             <i class="fas fa-user-tie"></i>
             <span>Direksi</span>
         </a>
-        {{-- <a href="{{ route('bisnis.index') }}"> --}}
+
+        <a href="{{ route('bisnis.index') }}" class="{{ request()->routeIs('bisnis.*') ? 'active' : '' }}">
             <i class="fas fa-briefcase"></i>
             <span>Bisnis</span>
         </a>
-        {{-- <a href="{{ route('news.index') }}"> --}}
+
+        {{-- <a href="{{ route('news.index') }}" class="{{ request()->routeIs('news.*') ? 'active' : '' }}"> --}}
             <i class="fas fa-newspaper"></i>
             <span>News</span>
         </a>
-        {{-- <a href="{{ route('sosmed.index') }}"> --}}
+
+        {{-- <a href="{{ route('sosmed.index') }}" class="{{ request()->routeIs('sosmed.*') ? 'active' : '' }}"> --}}
             <i class="fas fa-hashtag"></i>
             <span>Sosial Media</span>
         </a>

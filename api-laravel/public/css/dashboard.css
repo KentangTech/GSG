@@ -124,7 +124,7 @@ body {
     border-bottom: 1px solid #edf0f5;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
     backdrop-filter: saturate(180%) blur(12px);
     transition: background var(--transition-speed) ease,
         border-color var(--transition-speed) ease;

@@ -1,29 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\Api\DireksiController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BisnisController;
+use App\Http\Controllers\DireksiController;
+use App\Http\Controllers\DashboardController;
 
 Route::redirect('/', '/login');
 
-// Guest Routes (Login)
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'show'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::resource('direksi', DireksiController::class);
+    Route::resource('bisnis', BisnisController::class)->parameters(['bisnis' => 'bisnis']);
 
-    Route::get('/direksi', function () {
-        return view('direksi.index');
-    })->name('direksi.index');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-Route::prefix('api')->middleware('auth')->group(function () {
-    Route::post('direksi', [DireksiController::class , 'json']);
-});
+// Api Publik
+
+Route::get('api/direksi', [DireksiController::class, 'json']);
+Route::get('api/bisnis', [BisnisController::class, 'json']);

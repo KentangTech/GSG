@@ -14,18 +14,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Custom Admin CSS -->
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/direksi.css') }}" rel="stylesheet" />
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('GSG-Logo-Aja.png') }}" type="image/png" />
-
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- Livewire Styles -->
-    @livewireStyles
 </head>
 
 <body>
@@ -50,6 +46,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
 
     <!-- Custom JavaScript -->
     <script>
@@ -91,10 +88,18 @@
                 }
             });
         });
-    </script>
 
-    <!-- Livewire Scripts -->
-    @livewireScripts
+        const header = document.querySelector('.top-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                header.style.boxShadow = '0 8px 30px rgba(67, 97, 238, 0.15)';
+                header.style.padding = '0.6rem 1.2rem';
+            } else {
+                header.style.boxShadow = '0 4px 20px rgba(67, 97, 238, 0.1)';
+                header.style.padding = '0.8rem 1.2rem';
+            }
+        });
+    </script>
 
 </body>
 

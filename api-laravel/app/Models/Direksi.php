@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Direksi extends Model
 {
-    protected $fillable = ['nama', 'posisi', 'gambar'];
-    protected $table = 'direksi';
+    use HasFactory;
 
-    public function getGambarUrlAttribute()
+    protected $fillable = [
+        'nama',
+        'posisi',
+        'foto',
+    ];
+
+    // Akses URL foto
+    public function getFotoUrlAttribute()
     {
-        return $this->gambar ? asset('storage/direksi/' . $this->gambar) : null;
+        return $this->foto ? asset('storage/' . $this->foto) : 'https://ui-avatars.com/api/?name=' . urlencode($this->nama) . '&background=4361ee&color=fff';
     }
 }
