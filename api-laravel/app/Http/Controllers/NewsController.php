@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Events\ActivityNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
@@ -46,7 +47,17 @@ class NewsController extends Controller
             $data['gambar'] = $path;
         }
 
-        News::create($data);
+        // Simpan ke database
+        $news = News::create($data);
+
+        // Kirim notifikasi — sekarang $news sudah ada
+        event(new ActivityNotification([
+            'title' => 'Berita baru: ' . $news->judul,
+            'type' => 'News',
+            'icon' => 'fa-newspaper',
+            'bg' => 'info',
+            'user_id' => Auth::id(),
+        ]));
 
         return redirect()->route('news.index')->with('success', 'Berita berhasil ditambahkan.');
     }
@@ -73,14 +84,26 @@ class NewsController extends Controller
         $data = $request->only('judul', 'deskripsi');
 
         if ($request->hasFile('gambar')) {
+            // Hapus gambar lama
             if ($news->gambar) {
                 Storage::disk('public')->delete($news->gambar);
             }
+            // Simpan gambar baru
             $path = $request->file('gambar')->store('news', 'public');
             $data['gambar'] = $path;
         }
 
+        // Update data
         $news->update($data);
+
+        // Kirim notifikasi: "Berita diperbarui"
+        event(new ActivityNotification([
+            'title' => 'Berita diperbarui: ' . $news->judul,
+            'type' => 'News',
+            'icon' => 'fa-newspaper',
+            'bg' => 'warning',
+            'user_id' => Auth::id(),
+        ]));
 
         return redirect()->route('news.index')->with('success', 'Berita berhasil diperbarui.');
     }
@@ -90,11 +113,21 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
+        $judul = $news->judul;
+
         if ($news->gambar) {
             Storage::disk('public')->delete($news->gambar);
         }
 
         $news->delete();
+
+        event(new ActivityNotification([
+            'title' => 'Berita dihapus: ' . $judul,
+            'type' => 'News',
+            'icon' => 'fa-trash',
+            'bg' => 'danger',
+            'user_id' => Auth::id(),
+        ]));
 
         return redirect()->route('news.index')->with('success', 'Berita berhasil dihapus.');
     }
@@ -122,4 +155,3 @@ class NewsController extends Controller
         ]);
     }
 }
-

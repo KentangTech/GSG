@@ -17,6 +17,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/mark-all-read', [DashboardController::class, 'markAllAsRead'])->name('dashboard.markAllAsRead');
 
     Route::resource('direksi', DireksiController::class);
     Route::resource('bisnis', BisnisController::class)->parameters(['bisnis' => 'bisnis']);

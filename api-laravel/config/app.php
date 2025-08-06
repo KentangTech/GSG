@@ -1,5 +1,7 @@
 <?php
 
+use NunoMaduro\Collision\Provider;
+
 return [
 
     /*
@@ -103,6 +105,10 @@ return [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
         ),
+    ],
+
+    'Provider' => [
+        App\Providers\BroadcastServiceProvider::class,
     ],
 
     /*

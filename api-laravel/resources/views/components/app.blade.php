@@ -20,6 +20,7 @@
     <!-- Custom Admin CSS -->
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/direksi.css') }}" rel="stylesheet" />
+    @stack('styles')
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('GSG-Logo-Aja.png') }}" type="image/png" />
@@ -101,6 +102,9 @@
             }
         });
     </script>
+
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    @stack('scripts')
 
 </body>
 

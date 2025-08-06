@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedsosTeam;
+use App\Events\ActivityNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class MedsosController extends Controller
 {
@@ -53,6 +55,7 @@ class MedsosController extends Controller
      */
     public function index()
     {
+
         $medsos = MedsosTeam::with('platforms')->latest()->paginate(10);
         return view('medsos.index', compact('medsos'));
     }
@@ -82,10 +85,8 @@ class MedsosController extends Controller
         DB::beginTransaction();
         try {
             $team = new MedsosTeam();
-            $team->fill([
-                'name' => $validated['name'],
-                'username' => ltrim($validated['username'], '@'),
-            ]);
+            $team->name = $validated['name'];
+            $team->username = ltrim($validated['username'], '@');
 
             if ($request->hasFile('image')) {
                 $path = $request->file('image')->store('medsos', 'public');
@@ -94,7 +95,7 @@ class MedsosController extends Controller
 
             $team->save();
 
-            // Simpan platforms dengan upsert (lebih efisien)
+            // Simpan platforms
             foreach ($validated['platforms'] as $platform) {
                 $team->platforms()->create([
                     'name' => $platform['name'],
@@ -104,11 +105,20 @@ class MedsosController extends Controller
 
             DB::commit();
 
+            // 🔔 Kirim notifikasi: Ditambahkan oleh [User]
+            event(new ActivityNotification([
+                'title' => 'Media sosial baru: ' . $team->name,
+                'type' => 'Social',
+                'icon' => 'fa-hashtag',
+                'bg' => 'primary',
+                'user_id' => Auth::id(),
+            ]));
+
             return redirect()->route('medsos.index')->with('success', 'Media sosial berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Gagal simpan medsos: ' . $e->getMessage(), [
-                'input' => $request->except('image'), // Hindari log file besar
+                'input' => $request->except('image'),
             ]);
 
             return back()->withInput()->with('error', 'Gagal menyimpan data. Coba lagi.');
@@ -140,10 +150,8 @@ class MedsosController extends Controller
 
         DB::beginTransaction();
         try {
-            $medsos->fill([
-                'name' => $validated['name'],
-                'username' => ltrim($validated['username'], '@'),
-            ]);
+            $medsos->name = $validated['name'];
+            $medsos->username = ltrim($validated['username'], '@');
 
             if ($request->hasFile('image')) {
                 if ($medsos->image) {
@@ -155,7 +163,7 @@ class MedsosController extends Controller
 
             $medsos->save();
 
-            // Hapus & simpan ulang platforms (bisa diganti upsert jika perlu ID)
+            // Hapus dan simpan ulang platforms
             $medsos->platforms()->delete();
 
             foreach ($validated['platforms'] as $platform) {
@@ -166,6 +174,15 @@ class MedsosController extends Controller
             }
 
             DB::commit();
+
+            // 🔔 Kirim notifikasi: Diperbarui oleh [User]
+            event(new ActivityNotification([
+                'title' => 'Media sosial diperbarui: ' . $medsos->name,
+                'type' => 'Social',
+                'icon' => 'fa-hashtag',
+                'bg' => 'warning',
+                'user_id' => Auth::id(),
+            ]));
 
             return redirect()->route('medsos.index')->with('success', 'Media sosial berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -184,15 +201,26 @@ class MedsosController extends Controller
      */
     public function destroy(MedsosTeam $medsos)
     {
+        $nama = $medsos->name; // Simpan nama sebelum dihapus
+
         DB::beginTransaction();
         try {
             if ($medsos->image) {
                 Storage::disk('public')->delete($medsos->image);
             }
 
-            $medsos->delete(); // cascade hapus platforms
+            $medsos->delete();
 
             DB::commit();
+
+            // 🔔 Kirim notifikasi: Dihapus oleh [User]
+            event(new ActivityNotification([
+                'title' => 'Media sosial dihapus: ' . $nama,
+                'type' => 'Social',
+                'icon' => 'fa-trash',
+                'bg' => 'danger',
+                'user_id' => Auth::id(),
+            ]));
 
             return redirect()->route('medsos.index')->with('success', 'Media sosial berhasil dihapus.');
         } catch (\Exception $e) {
