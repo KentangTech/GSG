@@ -15,7 +15,7 @@ const NewsSection = () => {
   useEffect(() => {
     const loadNews = async () => {
       try {
-        const data = await fetchData("news"); // endpoint: /api/news
+        const data = await fetchData("api/news");
         const formatted = data.map(item => ({
           id: item.id,
           title: item.title,

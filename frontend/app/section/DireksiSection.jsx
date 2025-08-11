@@ -7,7 +7,7 @@ function useOnScreen(ref) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIntersecting(entry.isIntersecting);
+        setIntersecting(!!entry?.isIntersecting);
       },
       { threshold: 0.2 }
     );
@@ -29,12 +29,15 @@ export default function DireksiSection() {
   useEffect(() => {
     const loadDireksi = async () => {
       try {
-        const data = await fetchData("direksi");
-        const dataWithFlags = data.map((d) => ({
+        const rawData = await fetchData("api/direksi");
+        const dataArray = Array.isArray(rawData.data) ? rawData.data : [];
+        const dataWithFlags = dataArray.map((d) => ({
           ...d,
+          foto_url: d.foto_url?.trim(),
           imageLoaded: false,
           imageError: false,
         }));
+
         setDireksi(dataWithFlags);
       } catch (error) {
         console.error("Gagal mengambil data direksi:", error);
@@ -47,14 +50,16 @@ export default function DireksiSection() {
     loadDireksi();
   }, []);
 
+  // Cari berdasarkan posisi
   const getDirekturByPosition = (keyword) =>
     direksi.find((d) =>
-      d.position.toLowerCase().includes(keyword.toLowerCase())
+      d.posisi?.toLowerCase().includes(keyword.toLowerCase())
     );
 
   const direkturUtama = getDirekturByPosition("utama");
   const direkturKeuangan = getDirekturByPosition("keuangan");
   const direkturOperasional = getDirekturByPosition("operasional");
+
   const orderedDireksi = [direkturOperasional, direkturUtama, direkturKeuangan].filter(Boolean);
 
   const renderSkeletonCards = (keyPrefix) => (
@@ -74,35 +79,35 @@ export default function DireksiSection() {
   return (
     <section ref={ref} className={`${styles.direksiSection} ${isVisible ? styles.fadeIn : ""}`}>
       {loading ? (
-        renderSkeletonCards('skeleton')
+        renderSkeletonCards("skeleton")
       ) : orderedDireksi.length === 0 ? (
-        renderSkeletonCards('fallback')
+        renderSkeletonCards("fallback")
       ) : (
         <div className={styles.cardContainer}>
           {orderedDireksi.map((person, idx) => (
-            <div key={idx} className={`${styles.card} ${isVisible ? styles.isVisible : ''}`}>
+            <div key={idx} className={`${styles.card} ${isVisible ? styles.isVisible : ""}`}>
               <div className={styles.circularCard}>
                 {!person.imageLoaded && !person.imageError && (
                   <div className={styles.imageLoaderContainer}>
                     <img src="/icons/data.gif" alt="Loading" className={styles.loaderGif} />
                   </div>
                 )}
-                {!person.imageLoaded && person.imageError && (
-                  <div className={styles.errorMessage}>Data tidak bisa dimuat</div>
+                {person.imageError && (
+                  <div className={styles.errorMessage}>Gambar tidak tersedia</div>
                 )}
-                {person.image && !person.imageError && (
+                {person.foto_url && !person.imageError && (
                   <img
-                    src={person.image}
-                    alt={person.name}
+                    src={person.foto_url} // Sudah di-trim di useEffect
+                    alt={person.nama || "Direksi"}
                     className={styles.personImage}
                     style={{
                       opacity: person.imageLoaded ? 1 : 0,
-                      visibility: person.imageLoaded ? 'visible' : 'hidden',
+                      visibility: person.imageLoaded ? "visible" : "hidden",
                     }}
                     loading="lazy"
                     onLoad={() => {
-                      setDireksi(prev =>
-                        prev.map(d =>
+                      setDireksi((prev) =>
+                        prev.map((d) =>
                           d.id === person.id
                             ? { ...d, imageLoaded: true, imageError: false }
                             : d
@@ -110,8 +115,8 @@ export default function DireksiSection() {
                       );
                     }}
                     onError={() => {
-                      setDireksi(prev =>
-                        prev.map(d =>
+                      setDireksi((prev) =>
+                        prev.map((d) =>
                           d.id === person.id
                             ? { ...d, imageError: true, imageLoaded: false }
                             : d
@@ -121,11 +126,11 @@ export default function DireksiSection() {
                   />
                 )}
               </div>
-              <h4 className="mb-1" style={{ fontWeight: 'bold', color: '#222' }}>
-                {person.position}
+              <h4 className="mb-1" style={{ fontWeight: "bold", color: "#222" }}>
+                {person.posisi || "Posisi Tidak Diketahui"}
               </h4>
-              <p className="text-muted" style={{ fontSize: '1.1rem' }}>
-                {person.name}
+              <p className="text-muted" style={{ fontSize: "1.1rem" }}>
+                {person.nama || "Nama Tidak Diketahui"}
               </p>
             </div>
           ))}

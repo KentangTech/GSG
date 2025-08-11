@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import style from "@/app/css/AboutPage.module.css";
-import { fetchData } from "@/lib/api"; // ← Import fungsi API
+import { fetchData } from "@/lib/api";
 
 function truncateDescHalf(text, percentage = 0.5) {
   const cleanText = text.replace(/<[^>]*>/g, '').trim();
@@ -50,15 +50,14 @@ export default function BusinessSection({
   const sliderRef = useRef(null);
   const cardRefs = useRef([]);
 
-  // Ambil data dari API Laravel
   useEffect(() => {
     const loadBisnis = async () => {
       try {
-        const data = await fetchData("bisnis"); // endpoint: /api/bisnis
+        const data = await fetchData("api/bisnis");
         setBisnisData(data);
       } catch (error) {
         console.error("Gagal ambil data bisnis:", error);
-        setBisnisData([]); // fallback kosong
+        setBisnisData([]);
       }
     };
 

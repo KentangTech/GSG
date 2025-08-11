@@ -12,7 +12,7 @@ const SocialMediaCard = () => {
   useEffect(() => {
     const loadSocialMedia = async () => {
       try {
-        const data = await fetchData("social-media"); // endpoint: /api/social-media
+        const data = await fetchData("api/social-media");
         const formatted = data.map(item => ({
           id: item.id,
           name: item.name,
