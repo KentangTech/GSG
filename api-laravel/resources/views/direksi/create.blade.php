@@ -67,20 +67,16 @@
                             <select name="posisi" id="posisi"
                                     class="form-control form-control-lg @error('posisi') is-invalid @enderror"
                                     required>
-                                <option value="" disabled
-                                    {{ old('posisi', $isEdit ? $direksi->posisi : '') ? '' : 'selected' }}>
+                                <option value="" disabled {{ old('posisi', $isEdit ? $direksi->posisi : '') ? '' : 'selected' }}>
                                     -- Pilih Posisi --
                                 </option>
-                                <option value="Direktur Utama"
-                                    {{ old('posisi', $isEdit ? $direksi->posisi : '') == 'Direktur Utama' ? 'selected' : '' }}>
+                                <option value="Direktur Utama" {{ old('posisi', $isEdit ? $direksi->posisi : '') == 'Direktur Utama' ? 'selected' : '' }}>
                                     Direktur Utama
                                 </option>
-                                <option value="Direktur Keuangan"
-                                    {{ old('posisi', $isEdit ? $direksi->posisi : '') == 'Direktur Keuangan' ? 'selected' : '' }}>
+                                <option value="Direktur Keuangan" {{ old('posisi', $isEdit ? $direksi->posisi : '') == 'Direktur Keuangan' ? 'selected' : '' }}>
                                     Direktur Keuangan
                                 </option>
-                                <option value="Direktur Operasional"
-                                    {{ old('posisi', $isEdit ? $direksi->posisi : '') == 'Direktur Operasional' ? 'selected' : '' }}>
+                                <option value="Direktur Operasional" {{ old('posisi', $isEdit ? $direksi->posisi : '') == 'Direktur Operasional' ? 'selected' : '' }}>
                                     Direktur Operasional
                                 </option>
                             </select>
@@ -155,57 +151,29 @@
     </div>
 </div>
 
-<!-- Cropper.js CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+<!-- HAPUS: Cropper.js CSS dan Modal -->
+<!-- Tidak ada modal crop dan tidak ada library cropper -->
 
-<!-- Modal Crop (Modern & Profesional) -->
-<div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 shadow-lg border-0">
-            <div class="modal-header bg-primary text-white rounded-top-4 d-flex align-items-center">
-                <i class="fas fa-crop-alt me-2"></i>
-                <h5 class="modal-title" id="cropModalLabel">Crop Foto Profil</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center p-5">
-                <p class="text-muted mb-4">Tarik dan atur area potong agar pas dengan wajah. Ukuran akhir: <strong>250×250px</strong>.</p>
-                <div style="max-height: 400px; overflow: hidden; border-radius: 12px;">
-                    <img id="image-crop" class="img-fluid" style="max-width: 100%;">
-                </div>
-            </div>
-            <div class="modal-footer border-0 pb-4 px-4">
-                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i> Batal
-                </button>
-                <button type="button" class="btn btn-primary px-4 d-flex align-items-center gap-2" id="cropAndSave">
-                    <i class="fas fa-check"></i> <span id="crop-btn-text">Crop & Simpan</span>
-                    <span id="crop-loading" class="spinner-border spinner-border-sm d-none" role="status"></span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Cropper.js JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-
-<!-- JavaScript Utama -->
+<!-- JavaScript Sederhana untuk Upload & Preview -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('foto');
         const preview = document.getElementById('image-preview');
-        const cropModal = document.getElementById('cropModal');
-        const modal = bootstrap.Modal.getOrCreateInstance(cropModal);
-        let cropper;
 
         // Klik dropzone → buka file picker
         dropzone.addEventListener('click', () => fileInput.click());
 
-        // Handle klik upload
+        // Handle file change (langsung preview)
         fileInput.addEventListener('change', function () {
             const file = this.files[0];
-            if (file) openCropModal(file);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         });
 
         // Drag over
@@ -236,79 +204,6 @@
                 alert('Hanya file gambar yang diperbolehkan!');
             }
         }
-
-        // Buka modal crop
-        function openCropModal(file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const image = document.getElementById('image-crop');
-                image.src = e.target.result;
-
-                modal.show();
-
-                cropModal.addEventListener('shown.bs.modal', function () {
-                    if (cropper) cropper.destroy();
-                    cropper = new Cropper(image, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                        autoCropArea: 0.8,
-                        responsive: true,
-                        zoomable: true,
-                        movable: true,
-                        cropBoxResizable: true,
-                        cropBoxMovable: true,
-                        minCropBoxWidth: 250,
-                        minCropBoxHeight: 250,
-                        autoCrop: true,
-                        background: false,
-                        highlight: false
-                    });
-                }, { once: true });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Crop & Simpan
-        document.getElementById('cropAndSave').addEventListener('click', function () {
-            const btnText = document.getElementById('crop-btn-text');
-            const loader = document.getElementById('crop-loading');
-
-            if (!cropper) return;
-
-            // Tampilkan loading
-            btnText.textContent = 'Memproses...';
-            loader.classList.remove('d-none');
-
-            cropper.getCroppedCanvas({
-                width: 250,
-                height: 250,
-                fillColor: '#fff',
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high'
-            }).toBlob(function (blob) {
-                const file = new File([blob], "direksi_" + Date.now() + ".jpg", {
-                    type: "image/jpeg"
-                });
-
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-
-                modal.hide();
-                cropper.destroy();
-                cropper = null;
-
-                // Reset UI
-                btnText.textContent = 'Crop & Simpan';
-                loader.classList.add('d-none');
-            }, 'image/jpeg', 0.9);
-        });
     });
 </script>
 
