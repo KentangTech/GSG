@@ -33,10 +33,3 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-
-// Api Publik
-
-Route::get('api/direksi', [DireksiController::class, 'json']);
-Route::get('api/bisnis', [BisnisController::class, 'json']);
-Route::get('api/news', [NewsController::class, 'json'])->name('news.json');
-Route::get('api/social-media', [MedsosController::class, 'json'])->name('medsos.json');
